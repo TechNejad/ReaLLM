@@ -46,6 +46,19 @@
             color: var(--text-primary);
             line-height: 1.6;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Neural network canvas background */
+        #neural-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 1.0;
+            pointer-events: none;
         }
 
         /* Header */
@@ -53,8 +66,8 @@
             background: var(--secondary-bg);
             border-bottom: 2px solid var(--border);
             padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr 400px;
             align-items: center;
             position: sticky;
             top: 0;
@@ -67,14 +80,13 @@
         .logo-section {
             display: flex;
             align-items: center;
-            gap: 0;
+            gap: 0.5rem;
         }
 
         .logo {
             font-size: 1.75rem;
             font-weight: 700;
             color: var(--accent);
-            text-transform: uppercase;
             letter-spacing: 2px;
             text-shadow: 0 0 10px var(--accent-glow);
         }
@@ -95,6 +107,8 @@
             box-shadow: 0 0 15px var(--accent-glow);
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            justify-self: center;
+            margin-left: 50px;
         }
 
         .view-prompt-btn:hover {
@@ -114,6 +128,8 @@
             grid-template-columns: 1fr 400px;
             height: calc(100vh - 73px);
             gap: 0;
+            position: relative;
+            z-index: 1;
         }
 
         /* Left Panel - Chat */
@@ -121,7 +137,8 @@
             display: flex;
             flex-direction: column;
             border-right: 1px solid var(--border);
-            background: var(--primary-bg);
+            background: rgba(26, 31, 58, 0.60);
+            backdrop-filter: blur(8px);
         }
 
         .chat-messages {
@@ -234,7 +251,8 @@
         .chat-input-area {
             padding: 1.5rem 2rem;
             border-top: 1px solid var(--border);
-            background: var(--secondary-bg);
+            background: rgba(33, 39, 68, 0.70);
+            backdrop-filter: blur(8px);
         }
 
         .input-wrapper {
@@ -479,7 +497,7 @@
 
         .modal {
             background: var(--secondary-bg);
-            border: 2px solid var(--accent);
+            border: 1px solid rgba(94, 234, 212, 0.3);
             border-radius: 12px;
             max-width: 900px;
             width: 100%;
@@ -487,7 +505,7 @@
             display: flex;
             flex-direction: column;
             animation: slideUp 0.3s ease-out;
-            box-shadow: 0 0 40px var(--accent-glow), 0 20px 50px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
         }
 
         @keyframes slideUp {
@@ -505,6 +523,12 @@
             padding: 1.5rem 2rem;
             border-bottom: 1px solid var(--border);
             display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .modal-header-top {
+            display: flex;
             justify-content: space-between;
             align-items: center;
         }
@@ -515,6 +539,78 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            color: var(--accent);
+        }
+
+        .info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            margin-left: 0.5rem;
+            position: relative;
+            font-style: italic;
+        }
+
+        .info-icon:hover {
+            background: var(--accent);
+            color: var(--primary-bg);
+            transform: scale(1.15);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .info-icon::after {
+            content: 'Learn more about system prompts';
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(33, 39, 68, 0.98);
+            color: var(--text-primary);
+            padding: 0.5rem 0.875rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+            border: 1px solid var(--accent);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            font-style: normal;
+        }
+
+        .info-icon:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        .info-icon::before {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--accent);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .info-icon:hover::before {
+            opacity: 1;
         }
 
         .modal-header svg {
@@ -559,16 +655,70 @@
         }
 
         .prompt-display {
-            background: var(--code-bg);
-            border: 2px solid var(--border-medium);
+            background: transparent;
+            border: 1px solid rgba(94, 234, 212, 0.2);
             border-radius: 8px;
-            padding: 1.5rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.875rem;
-            line-height: 1.8;
-            color: var(--text-primary);
+            padding: 0;
+            margin-top: 0;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 0.8125rem;
+            line-height: 1.5;
+            color: #E0E0E0;
+            letter-spacing: 0;
+            font-weight: 400;
+            overflow: hidden;
+        }
+
+        .prompt-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0;
+            border-bottom: 1px solid rgba(94, 234, 212, 0.2);
+            font-size: 0.8125rem;
+            color: #6b7280;
+        }
+
+        .prompt-header-file {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .prompt-header-status {
+            color: #6b7280;
+            font-size: 0.75rem;
+        }
+
+        .prompt-content {
+            padding: 1rem;
+        }
+
+        .prompt-line {
+            display: flex;
+            gap: 1rem;
+            line-height: 1.5;
+        }
+
+        .line-number {
+            color: #4a5568;
+            min-width: 3ch;
+            text-align: right;
+            user-select: none;
+            flex-shrink: 0;
+            font-size: 0.8125rem;
+            padding-right: 0.75rem;
+        }
+
+        .line-content {
+            flex: 1;
             white-space: pre-wrap;
             word-wrap: break-word;
+        }
+
+        .modal-body a:hover {
+            color: #93c5fd;
+            opacity: 0.9;
         }
 
         /* Scrollbar */
@@ -591,6 +741,35 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--accent);
             box-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        /* Header Links */
+        .header-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-left: 2rem;
+        }
+
+        .header-link {
+            color: var(--text-tertiary);
+            font-size: 0.75rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            opacity: 0.7;
+        }
+
+        .header-link:hover {
+            color: var(--accent);
+            opacity: 1;
+        }
+
+        .header-link svg {
+            width: 12px;
+            height: 12px;
         }
 
         /* Responsive */
@@ -622,13 +801,85 @@
             }
         }
 
+        /* Welcome Message */
+        .welcome-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 200;
+            background: var(--accent);
+            border: none;
+            border-radius: 20px;
+            padding: 3.5rem 6rem;
+            box-shadow: 0 0 50px var(--accent-glow), 0 0 100px rgba(94, 234, 212, 0.3);
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            min-width: 700px;
+        }
+
+        .welcome-message.show {
+            opacity: 1;
+        }
+
+        .welcome-message.hide {
+            opacity: 0;
+        }
+
+        .welcome-message h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--primary-bg);
+            margin-bottom: 1rem;
+            text-shadow: none;
+            white-space: nowrap;
+        }
+
+        .welcome-message p {
+            font-size: 1.25rem;
+            color: var(--primary-bg);
+            line-height: 1.6;
+            max-width: 650px;
+            font-weight: 500;
+        }
+
     </style>
 </head>
 <body>
+    <!-- Neural network canvas background -->
+    <canvas id="neural-canvas"></canvas>
+
+    <!-- Welcome Message -->
+    <div class="welcome-message" id="welcomeMessage">
+        <h2>Welcome to Transparent Intelligence!</h2>
+        <p>This app shows you what is usually hidden from view. This is simply a demonstration of transparent design in practice. Not another AI tool.</p>
+    </div>
+
     <!-- Header -->
     <div class="header">
         <div class="logo-section">
             <div class="logo">ReaLLM</div>
+            <div class="header-links">
+                <a href="Assets/ReaLLM_Paper.pdf" target="_blank" class="header-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Paper
+                </a>
+                <a href="https://github.com/TechNejad/ReaLLM" target="_blank" class="header-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    GitHub
+                </a>
+                <a href="https://mohsen-hassan-nejad.netlify.app/" target="_blank" class="header-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                    </svg>
+                    Creator
+                </a>
+            </div>
         </div>
         <button class="view-prompt-btn" id="viewPromptBtn">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -686,22 +937,20 @@
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
             <div class="modal-header">
-                <h3>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                    </svg>
-                    System Prompt
-                </h3>
-                <button class="close-btn" id="closeModalBtn">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+                <div class="modal-header-top">
+                    <h3>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                        System Prompt
+                        <a href="https://medium.com/@mohsen.nejad94/system-prompts-the-invisible-instructions-shaping-human-ai-interactions-d1c5c646b26f" target="_blank" rel="noopener noreferrer" class="info-icon">i</a>
+                    </h3>
+                </div>
+                <p style="color: var(--accent); margin-bottom: 0; font-size: 0.875rem; line-height: 1.6;">
+                    Every AI model you interact with has a system prompt → Hidden instructions attached to every message you send. We show you ours:
+                </p>
             </div>
             <div class="modal-body">
-                <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9375rem;">
-                    The hidden instructions that shape every response
-                </p>
                 <div class="prompt-display" id="promptDisplay">
                     <!-- System prompt will be displayed here -->
                 </div>
@@ -717,9 +966,23 @@
         const LLM_MODEL = 'llama-3.3-70b-versatile';
 
         // System Prompts
-        const MAIN_SYSTEM_PROMPT = `You are an AI assistant designed to be helpful, honest, and careful about the limits of your knowledge. Your role is to support users by providing clear, relevant information, reasoning through problems step by step when appropriate, and avoiding speculation or overconfidence. You should be explicit when you are uncertain, distinguish facts from interpretations, and resist the urge to sound authoritative when the situation does not warrant it. You do not provide professional, legal, or medical advice, and you should say so plainly when a request crosses those boundaries.
+        const MAIN_SYSTEM_PROMPT = `You are an AI assistant designed to be helpful, honest, and careful about the limits of your knowledge.
 
-Your communication style is direct, concise, and mildly sarcastic when clarity benefits from it. You may challenge unclear assumptions, point out gaps in a user's reasoning, or state limitations bluntly rather than softening them unnecessarily. You remain respectful and non-hostile, but you are not required to flatter, reassure, or perform empathy theatrically. Your goal is not to appear human or agreeable, but to be legible, bounded, and reliable. When safety, ethics, or uncertainty are relevant, you surface them explicitly rather than hiding them behind confident language.`;
+Your role is to support users by providing clear, relevant information, reasoning through problems step by step when appropriate, and avoiding speculation or overconfidence.
+
+You should be explicit when you are uncertain, distinguish facts from interpretations, and resist the urge to sound authoritative when the situation does not warrant it.
+
+You do not provide professional, legal, or medical advice, and you should say so plainly when a request crosses those boundaries.
+
+Your communication style is direct, concise, and mildly sarcastic when clarity benefits from it.
+
+You may challenge unclear assumptions, point out gaps in a user's reasoning, or state limitations bluntly rather than softening them unnecessarily.
+
+You remain respectful and non-hostile, but you are not required to flatter, reassure, or perform empathy theatrically.
+
+Your goal is not to appear human or agreeable, but to be legible, bounded, and reliable.
+
+When safety, ethics, or uncertainty are relevant, you surface them explicitly rather than hiding them behind confident language.`;
 
         const INTERPRETER_SYSTEM_PROMPT = `You are an interpreter model. Your job is NOT to respond to the user's question, but to analyze what constraints and guidelines are shaping the main AI assistant's response.
 
@@ -775,13 +1038,28 @@ Be concise, clear, and focus on making the invisible visible to everyday users. 
         const transparencyContent = document.getElementById('transparencyContent');
         const viewPromptBtn = document.getElementById('viewPromptBtn');
         const modalOverlay = document.getElementById('modalOverlay');
-        const closeModalBtn = document.getElementById('closeModalBtn');
         const promptDisplay = document.getElementById('promptDisplay');
 
         // Initialize
         function init() {
-            // Display system prompt in modal
-            promptDisplay.textContent = MAIN_SYSTEM_PROMPT;
+            // Display system prompt in modal with file header and line numbers
+            const lines = MAIN_SYSTEM_PROMPT.split('\n');
+            const numberedLines = lines.map((line, index) => {
+                const lineNumber = index + 1;
+                const content = line || '';
+                return `<div class="prompt-line">
+                    <span class="line-number">${lineNumber}</span>
+                    <span class="line-content">${content}</span>
+                </div>`;
+            }).join('');
+
+            const header = `<div class="prompt-header">
+                <span class="prompt-header-file">system_prompt.txt</span>
+            </div>`;
+
+            const content = `<div class="prompt-content">${numberedLines}</div>`;
+
+            promptDisplay.innerHTML = header + content;
 
             // Event listeners
             sendBtn.addEventListener('click', handleSend);
@@ -794,10 +1072,6 @@ Be concise, clear, and focus on making the invisible visible to everyday users. 
 
             viewPromptBtn.addEventListener('click', () => {
                 modalOverlay.classList.add('active');
-            });
-
-            closeModalBtn.addEventListener('click', () => {
-                modalOverlay.classList.remove('active');
             });
 
             modalOverlay.addEventListener('click', (e) => {
@@ -1027,8 +1301,152 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
             }
         }
 
+        // Welcome message animation
+        window.addEventListener('load', () => {
+            const welcomeMessage = document.getElementById('welcomeMessage');
+            let isVisible = false;
+
+            // Show message after brief delay
+            setTimeout(() => {
+                welcomeMessage.classList.add('show');
+                isVisible = true;
+            }, 300);
+
+            // Hide message after 5 seconds
+            const autoHideTimeout = setTimeout(() => {
+                welcomeMessage.classList.add('hide');
+                isVisible = false;
+            }, 5300);
+
+            // Hide message on any click
+            document.addEventListener('click', () => {
+                if (isVisible) {
+                    clearTimeout(autoHideTimeout);
+                    welcomeMessage.classList.add('hide');
+                    isVisible = false;
+                }
+            }, { once: false });
+        });
+
         // Start app
         init();
+    </script>
+
+    <script>
+        // Neural network visualization
+        console.log('Neural network script starting...');
+        const canvas = document.getElementById('neural-canvas');
+        console.log('Canvas element:', canvas);
+
+        if (!canvas) {
+            console.error('Canvas element not found!');
+        } else {
+            const ctx = canvas.getContext('2d');
+            console.log('Canvas context:', ctx);
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            console.log('Canvas size:', canvas.width, 'x', canvas.height);
+
+            const nodes = [];
+            const nodeCount = 180; // Increased for more coverage
+            const maxDistance = 150; // Connection distance
+
+            class Node {
+                constructor(index) {
+                    // Distribute nodes evenly across the canvas using a grid-like approach
+                    const gridCols = Math.ceil(Math.sqrt(nodeCount));
+                    const gridRows = Math.ceil(nodeCount / gridCols);
+                    const col = index % gridCols;
+                    const row = Math.floor(index / gridCols);
+
+                    // Calculate base position in grid cell with some randomness
+                    const cellWidth = canvas.width / gridCols;
+                    const cellHeight = canvas.height / gridRows;
+
+                    this.x = (col * cellWidth) + (Math.random() * cellWidth);
+                    this.y = (row * cellHeight) + (Math.random() * cellHeight);
+
+                    this.vx = (Math.random() - 0.5) * 0.7; // Slightly faster movement
+                    this.vy = (Math.random() - 0.5) * 0.7;
+                    this.radius = 2; // Medium-sized nodes
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(94, 234, 212, 1.0)'; // Using ReaLLM accent color
+                    ctx.fill();
+                }
+            }
+
+            // Initialize nodes
+            console.log('Creating nodes...');
+            for (let i = 0; i < nodeCount; i++) {
+                nodes.push(new Node(i));
+            }
+            console.log('Created', nodes.length, 'nodes');
+
+            function drawConnections() {
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const dx = nodes[i].x - nodes[j].x;
+                        const dy = nodes[i].y - nodes[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < maxDistance) {
+                            ctx.beginPath();
+                            ctx.moveTo(nodes[i].x, nodes[i].y);
+                            ctx.lineTo(nodes[j].x, nodes[j].y);
+                            const opacity = (1 - distance / maxDistance) * 0.8; // More visible for testing
+                            ctx.strokeStyle = `rgba(94, 234, 212, ${opacity})`; // Using ReaLLM accent color
+                            ctx.lineWidth = 1.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            let frameCount = 0;
+            function animate() {
+                try {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    nodes.forEach(node => {
+                        node.update();
+                        node.draw();
+                    });
+
+                    drawConnections();
+
+                    frameCount++;
+                    if (frameCount % 60 === 0) {
+                        console.log('Animation running... frame:', frameCount);
+                    }
+
+                    requestAnimationFrame(animate);
+                } catch (error) {
+                    console.error('Animation error:', error);
+                }
+            }
+
+            console.log('Starting animation...');
+            animate();
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
     </script>
 </body>
 </html>

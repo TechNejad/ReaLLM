@@ -3,7 +3,7 @@
 **Making the invisible visible** – See the hidden instructions that shape AI responses in real-time.
 
 ---
-**Live Demo:** [Check out the live prototype here](https://reallm.netlify.app/)
+[Check out the live prototype here](https://reallm.netlify.app/)
 ---
 ## What is ReaLLM?
 

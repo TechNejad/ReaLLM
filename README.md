@@ -37,15 +37,6 @@ Two AI models work together:
 1. **Primary Model**: Responds to your questions
 2. **Interpreter Model**: Analyzes and explains what constraints shaped that response
 
-## How to Use
-
-Try asking questions that test the AI's boundaries:
-- Medical advice ("Can you diagnose my symptoms?")
-- Uncertain information ("What's happening in the news today?")
-- Professional guidance ("Should I invest in this stock?")
-
-Watch the transparency panel reveal **why** the AI responds the way it does.
-
 ## The Research
 
 This project is part of ongoing research into AI safety and human-AI interaction, developed for the AI Safety, Ethics, and Society (AISES) course.

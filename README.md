@@ -1,4 +1,4 @@
-# ReaLLM: Transparent Intelligence –– ###[Check out the live prototype here](https://reallm.netlify.app/)
+# ReaLLM: Transparent Intelligence – [live prototype](https://reallm.netlify.app/)
 
 **Making the invisible visible** – See the hidden instructions that shape AI responses in real-time.
 

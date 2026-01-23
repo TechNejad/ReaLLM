@@ -1,4 +1,4 @@
-# ReaLLM: Transparent AI Interface
+# ReaLLM: Transparent Intelligence 
 
 **Making the invisible visible** – See the hidden instructions that shape AI responses in real-time.
 

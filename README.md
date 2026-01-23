@@ -3,7 +3,8 @@
 **Making the invisible visible** – See the hidden instructions that shape AI responses in real-time.
 
 ---
-
+**Live Demo:** [Check out the live prototype here](https://reallm.netlify.app/)
+---
 ## What is ReaLLM?
 
 ReaLLM is a research prototype that reveals what typical AI chatbots hide: the system prompts and constraints that guide every response. Unlike standard chatbots that conceal their instructions, ReaLLM shows you exactly what rules, boundaries, and guidelines are shaping the AI's behavior.

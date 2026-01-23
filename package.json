@@ -1,0 +1,11 @@
+{
+  "name": "reallm",
+  "version": "1.0.0",
+  "description": "ReaLLM - Interface-Level Transparency for AI Safety",
+  "author": "Mohsen HassanNejad",
+  "license": "MIT",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "build": "echo 'Build complete'"
+  }
+}

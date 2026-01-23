@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReaLLM - Transparent AI Interface</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-bg: #1a1f3a;
+            --secondary-bg: #212744;
+            --tertiary-bg: #2a3150;
+            --card-bg: #2f3659;
+            --accent: #5eead4;
+            --accent-hover: #2dd4bf;
+            --accent-light: rgba(94, 234, 212, 0.12);
+            --accent-glow: rgba(94, 234, 212, 0.25);
+            --text-primary: #e0e7ff;
+            --text-secondary: #a5b4d4;
+            --text-tertiary: #7987a8;
+            --border: #3a4260;
+            --border-medium: #4a5270;
+            --success: #5eead4;
+            --warning: #fbbf24;
+            --error: #f87171;
+            --code-bg: #1e2337;
+            --transparency-panel-bg: #1f2540;
+            --shadow-sm: 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+            --shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 20px rgba(94, 234, 212, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: var(--secondary-bg);
+            border-bottom: 2px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(20, 25, 55, 0.95);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .view-prompt-btn {
+            padding: 0.75rem 1.75rem;
+            background: var(--accent);
+            color: var(--primary-bg);
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 0 15px var(--accent-glow);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .view-prompt-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .view-prompt-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Main Layout */
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            height: calc(100vh - 73px);
+            gap: 0;
+        }
+
+        /* Left Panel - Chat */
+        .chat-panel {
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            background: var(--primary-bg);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 1rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .user-avatar {
+            background: var(--card-bg);
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .assistant-avatar {
+            background: var(--accent);
+            color: var(--primary-bg);
+            box-shadow: 0 0 12px var(--accent-glow);
+            font-weight: 700;
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-role {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-tertiary);
+            margin-bottom: 0.5rem;
+        }
+
+        .message-text {
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .message.user .message-text {
+            color: var(--text-secondary);
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 0.25rem;
+            padding: 0.75rem;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+            30% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .chat-input-area {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border);
+            background: var(--secondary-bg);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-size: 0.9375rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 50px;
+            max-height: 150px;
+            transition: all 0.3s;
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light), 0 0 15px var(--accent-glow);
+            background: var(--tertiary-bg);
+        }
+
+        .send-btn {
+            padding: 0.75rem 1.75rem;
+            background: var(--accent);
+            color: var(--primary-bg);
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            height: 50px;
+            box-shadow: 0 0 15px var(--accent-glow);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            background: var(--accent-hover);
+            box-shadow: var(--shadow-glow);
+            transform: translateY(-2px);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Right Panel - Transparency */
+        .transparency-panel {
+            background: var(--transparency-panel-bg);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .panel-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--transparency-panel-bg);
+            z-index: 10;
+        }
+
+        .panel-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .panel-header p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .transparency-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .insight-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insight-card:hover {
+            border-color: var(--border-medium);
+        }
+
+        .insight-card.expanded {
+            background: var(--tertiary-bg);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow), var(--shadow);
+        }
+
+        .insight-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .insight-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-tertiary);
+            margin-bottom: 0.5rem;
+        }
+
+        .insight-value {
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .insight-expand {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .insight-card.expanded .insight-expand {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: rotate(180deg);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .insight-expand svg {
+            width: 14px;
+            height: 14px;
+            color: var(--text-secondary);
+        }
+
+        .insight-card.expanded .insight-expand svg {
+            color: var(--primary-bg);
+        }
+
+        .insight-detail {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        .insight-card.expanded .insight-detail {
+            max-height: 500px;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-tertiary);
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .empty-state h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state p {
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 14, 39, 0.85);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal {
+            background: var(--secondary-bg);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease-out;
+            box-shadow: 0 0 40px var(--accent-glow), 0 20px 50px rgba(0, 0, 0, 0.7);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .modal-header svg {
+            width: 24px;
+            height: 24px;
+            color: var(--accent);
+        }
+
+        .close-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .close-btn:hover svg {
+            color: var(--primary-bg);
+        }
+
+        .close-btn svg {
+            width: 16px;
+            height: 16px;
+            color: var(--text-secondary);
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .prompt-display {
+            background: var(--code-bg);
+            border: 2px solid var(--border-medium);
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--secondary-bg);
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-medium);
+            border-radius: 6px;
+            border: 2px solid var(--secondary-bg);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr 320px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .transparency-panel {
+                display: none;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .chat-messages {
+                padding: 1rem;
+            }
+
+            .chat-input-area {
+                padding: 1rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-section">
+            <div class="logo">ReaLLM</div>
+        </div>
+        <button class="view-prompt-btn" id="viewPromptBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            </svg>
+            View System Prompt
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Left Panel: Chat -->
+        <div class="chat-panel">
+            <div class="chat-messages" id="chatMessages">
+            </div>
+
+            <div class="chat-input-area">
+                <div class="input-wrapper">
+                    <textarea
+                        class="chat-input"
+                        id="chatInput"
+                        placeholder="Type your message..."
+                        rows="1"
+                    ></textarea>
+                    <button class="send-btn" id="sendBtn">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Transparency -->
+        <div class="transparency-panel">
+            <div class="panel-header">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Transparency Panel
+                </h3>
+                <p>See hidden instructions shaping responses</p>
+            </div>
+
+            <div class="transparency-content" id="transparencyContent">
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h4>No insights yet</h4>
+                    <p>Start chatting to see transparency insights</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Prompt Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                    System Prompt
+                </h3>
+                <button class="close-btn" id="closeModalBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9375rem;">
+                    The hidden instructions that shape every response
+                </p>
+                <div class="prompt-display" id="promptDisplay">
+                    <!-- System prompt will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import Groq from "https://esm.sh/groq-sdk@0.8.0";
+
+        // Configuration
+        const API_KEY = "%%GROQ_API_KEY%%";
+        const LLM_MODEL = 'llama-3.3-70b-versatile';
+
+        // System Prompts
+        const MAIN_SYSTEM_PROMPT = `You are an AI assistant designed to be helpful, honest, and careful about the limits of your knowledge. Your role is to support users by providing clear, relevant information, reasoning through problems step by step when appropriate, and avoiding speculation or overconfidence. You should be explicit when you are uncertain, distinguish facts from interpretations, and resist the urge to sound authoritative when the situation does not warrant it. You do not provide professional, legal, or medical advice, and you should say so plainly when a request crosses those boundaries.
+
+Your communication style is direct, concise, and mildly sarcastic when clarity benefits from it. You may challenge unclear assumptions, point out gaps in a user's reasoning, or state limitations bluntly rather than softening them unnecessarily. You remain respectful and non-hostile, but you are not required to flatter, reassure, or perform empathy theatrically. Your goal is not to appear human or agreeable, but to be legible, bounded, and reliable. When safety, ethics, or uncertainty are relevant, you surface them explicitly rather than hiding them behind confident language.`;
+
+        const INTERPRETER_SYSTEM_PROMPT = `You are an interpreter model. Your job is NOT to respond to the user's question, but to analyze what constraints and guidelines are shaping the main AI assistant's response.
+
+You receive:
+1. The system prompt that guides the main model
+2. The conversation turn (user message and assistant response)
+
+Your task: Generate short, structured insights that explain to a non-technical user:
+- What role/identity is the model playing?
+- What constraints are active? (e.g., uncertainty acknowledgment, boundary-setting, tone requirements)
+- What stance or tone is being used and why?
+- Any uncertainty indicators or limitations being surfaced
+
+Return your analysis as a JSON object with these fields:
+{
+  "role_identity": {
+    "label": "Model Role",
+    "value": "brief description (5-8 words)",
+    "detail": "1-2 sentence explanation of what role the model is playing"
+  },
+  "active_constraints": {
+    "label": "Active Constraints",
+    "value": "brief summary (5-8 words)",
+    "detail": "1-2 sentence explanation of what rules or boundaries are being followed"
+  },
+  "tone_stance": {
+    "label": "Tone & Stance",
+    "value": "brief description (3-5 words)",
+    "detail": "1-2 sentence explanation of the communication style being used"
+  },
+  "uncertainty_indicators": {
+    "label": "Uncertainty Signals",
+    "value": "brief status (3-5 words)",
+    "detail": "1-2 sentence explanation of how the model is handling knowledge limits or expressing uncertainty"
+  }
+}
+
+Be concise, clear, and focus on making the invisible visible to everyday users. Avoid jargon.`;
+
+        // Initialize Groq
+        const groq = new Groq({
+            apiKey: API_KEY,
+            dangerouslyAllowBrowser: true
+        });
+
+        // State
+        let conversationHistory = [];
+
+        // DOM Elements
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const transparencyContent = document.getElementById('transparencyContent');
+        const viewPromptBtn = document.getElementById('viewPromptBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const promptDisplay = document.getElementById('promptDisplay');
+
+        // Initialize
+        function init() {
+            // Display system prompt in modal
+            promptDisplay.textContent = MAIN_SYSTEM_PROMPT;
+
+            // Event listeners
+            sendBtn.addEventListener('click', handleSend);
+            chatInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                }
+            });
+
+            viewPromptBtn.addEventListener('click', () => {
+                modalOverlay.classList.add('active');
+            });
+
+            closeModalBtn.addEventListener('click', () => {
+                modalOverlay.classList.remove('active');
+            });
+
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) {
+                    modalOverlay.classList.remove('active');
+                }
+            });
+        }
+
+        // Handle send message
+        async function handleSend() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            // Clear input
+            chatInput.value = '';
+            sendBtn.disabled = true;
+
+            // Add user message
+            addMessage('user', message);
+            conversationHistory.push({ role: 'user', content: message });
+
+            // Show typing indicator
+            const typingId = addTypingIndicator();
+
+            try {
+                // Call primary model
+                const assistantResponse = await callPrimaryModel(conversationHistory);
+
+                // Remove typing indicator
+                removeTypingIndicator(typingId);
+
+                // Add assistant message
+                addMessage('assistant', assistantResponse);
+                conversationHistory.push({ role: 'assistant', content: assistantResponse });
+
+                // Call interpreter model
+                await updateTransparencyPanel(message, assistantResponse);
+
+            } catch (error) {
+                console.error('Error:', error);
+                removeTypingIndicator(typingId);
+                addMessage('assistant', 'Sorry, I encountered an error. Please try again.');
+            } finally {
+                sendBtn.disabled = false;
+                chatInput.focus();
+            }
+        }
+
+        // Call primary model
+        async function callPrimaryModel(history) {
+            const messages = [
+                { role: 'system', content: MAIN_SYSTEM_PROMPT },
+                ...history
+            ];
+
+            const completion = await groq.chat.completions.create({
+                messages: messages,
+                model: LLM_MODEL,
+                temperature: 0.7,
+                max_tokens: 1024,
+            });
+
+            return completion.choices[0]?.message?.content || '';
+        }
+
+        // Call interpreter model
+        async function callInterpreterModel(userMessage, assistantResponse) {
+            const analysisPrompt = `System Prompt:
+${MAIN_SYSTEM_PROMPT}
+
+---
+
+User Message: "${userMessage}"
+
+Assistant Response: "${assistantResponse}"
+
+---
+
+Analyze what constraints and guidelines shaped this response. Return only valid JSON.`;
+
+            const completion = await groq.chat.completions.create({
+                messages: [
+                    { role: 'system', content: INTERPRETER_SYSTEM_PROMPT },
+                    { role: 'user', content: analysisPrompt }
+                ],
+                model: LLM_MODEL,
+                temperature: 0.3,
+                max_tokens: 512,
+                response_format: { type: "json_object" }
+            });
+
+            const jsonResponse = completion.choices[0]?.message?.content || '{}';
+            return JSON.parse(jsonResponse);
+        }
+
+        // Update transparency panel
+        async function updateTransparencyPanel(userMessage, assistantResponse) {
+            // Show loading state
+            transparencyContent.innerHTML = `
+                <div class="empty-state">
+                    <div class="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                    <p style="margin-top: 1rem;">Analyzing...</p>
+                </div>
+            `;
+
+            try {
+                const insights = await callInterpreterModel(userMessage, assistantResponse);
+
+                transparencyContent.innerHTML = '';
+
+                // Create insight cards
+                for (const [key, insight] of Object.entries(insights)) {
+                    if (insight && insight.label && insight.value) {
+                        const card = createInsightCard(insight);
+                        transparencyContent.appendChild(card);
+                    }
+                }
+            } catch (error) {
+                console.error('Interpreter error:', error);
+                transparencyContent.innerHTML = `
+                    <div class="empty-state">
+                        <p>Unable to generate insights for this response.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Create insight card
+        function createInsightCard(insight) {
+            const card = document.createElement('div');
+            card.className = 'insight-card';
+
+            card.innerHTML = `
+                <div class="insight-header">
+                    <div>
+                        <div class="insight-label">${insight.label}</div>
+                        <div class="insight-value">${insight.value}</div>
+                    </div>
+                    <div class="insight-expand">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="insight-detail">${insight.detail}</div>
+            `;
+
+            card.addEventListener('click', () => {
+                card.classList.toggle('expanded');
+            });
+
+            return card;
+        }
+
+        // Add message to chat
+        function addMessage(role, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+
+            const avatar = document.createElement('div');
+            avatar.className = `message-avatar ${role}-avatar`;
+            avatar.textContent = role === 'user' ? 'U' : 'AI';
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+
+            const roleLabel = document.createElement('div');
+            roleLabel.className = 'message-role';
+            roleLabel.textContent = role === 'user' ? 'You' : 'Assistant';
+
+            const textDiv = document.createElement('div');
+            textDiv.className = 'message-text';
+            textDiv.textContent = content;
+
+            contentDiv.appendChild(roleLabel);
+            contentDiv.appendChild(textDiv);
+
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(contentDiv);
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Add typing indicator
+        function addTypingIndicator() {
+            const id = 'typing-' + Date.now();
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message assistant';
+            messageDiv.id = id;
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar assistant-avatar';
+            avatar.textContent = 'AI';
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+
+            const indicator = document.createElement('div');
+            indicator.className = 'typing-indicator';
+            indicator.innerHTML = `
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            `;
+
+            contentDiv.appendChild(indicator);
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(contentDiv);
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            return id;
+        }
+
+        // Remove typing indicator
+        function removeTypingIndicator(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.remove();
+            }
+        }
+
+        // Start app
+        init();
+    </script>
+</body>
+</html>

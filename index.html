@@ -47,6 +47,25 @@
             line-height: 1.6;
             overflow-x: hidden;
             position: relative;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Touch-friendly improvements */
+        button, a, .insight-card {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Prevent pull-to-refresh on mobile */
+        body {
+            overscroll-behavior-y: contain;
         }
 
         /* Neural network canvas background */
@@ -240,10 +259,22 @@
         .message-text {
             color: var(--text-primary);
             line-height: 1.6;
+            white-space: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .message-text strong {
+            font-weight: 600;
+            color: var(--accent);
         }
 
         .message.user .message-text {
             color: var(--text-secondary);
+        }
+
+        .message.user .message-text strong {
+            color: var(--text-primary);
         }
 
         .typing-indicator {
@@ -808,27 +839,257 @@
             .container {
                 grid-template-columns: 1fr 320px;
             }
+
+            .view-prompt-btn {
+                margin-left: 35px;
+            }
         }
 
         @media (max-width: 768px) {
+            /* Hide transparency panel on mobile */
             .container {
                 grid-template-columns: 1fr;
+                height: calc(100vh - 60px);
+                height: calc(100dvh - 60px); /* Dynamic viewport height for mobile browsers */
             }
 
             .transparency-panel {
                 display: none;
             }
 
-            .header {
-                padding: 1rem;
+            /* Ensure chat panel takes full height */
+            .chat-panel {
+                min-height: 0;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
             }
 
             .chat-messages {
-                padding: 1rem;
+                min-height: 0;
+                flex: 1;
+                overflow-y: auto;
+            }
+
+            /* Header adjustments */
+            .header {
+                padding: 0.5rem 1rem;
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .logo-section {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .logo {
+                font-size: 1.25rem;
+            }
+
+            .header-links {
+                margin-left: 1rem;
+                gap: 0.75rem;
+            }
+
+            .header-link {
+                font-size: 0.65rem;
+            }
+
+            .header-link svg {
+                width: 9px;
+                height: 9px;
+            }
+
+            .view-prompt-btn {
+                justify-self: end;
+                margin-left: 0;
+                font-size: 0.7rem;
+                padding: 0.5rem 1.25rem;
+            }
+
+            /* Chat area */
+            .chat-messages {
+                padding: 0.75rem;
             }
 
             .chat-input-area {
-                padding: 1rem;
+                padding: 0.75rem 1rem;
+                flex-shrink: 0;
+            }
+
+            .input-wrapper {
+                gap: 0.5rem;
+                width: 100%;
+            }
+
+            .chat-input {
+                font-size: 16px; /* Prevent iOS zoom on focus */
+                padding: 0.65rem 0.75rem;
+                min-height: 44px;
+            }
+
+            .send-btn {
+                padding: 0.65rem 1rem;
+                font-size: 0.85rem;
+                flex-shrink: 0;
+            }
+
+            /* Messages */
+            .message {
+                gap: 0.75rem;
+            }
+
+            .message-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 0.75rem;
+            }
+
+            .message-role {
+                font-size: 0.7rem;
+            }
+
+            .message-text {
+                font-size: 0.9rem;
+            }
+
+            /* Welcome message */
+            .welcome-message {
+                width: 90%;
+                max-width: 450px;
+                padding: 2rem 2.5rem;
+                border-radius: 16px;
+            }
+
+            .welcome-message h2 {
+                font-size: 1rem;
+                margin-bottom: 1rem;
+                white-space: normal;
+                line-height: 1.25;
+            }
+
+            .welcome-message p {
+                font-size: 0.8rem;
+                line-height: 1.5;
+            }
+
+            /* Typing placeholder */
+            .typing-placeholder {
+                font-size: 1.25rem;
+                padding: 0 1rem;
+                text-align: center;
+            }
+
+            /* Modal */
+            .modal {
+                width: 95%;
+                max-width: none;
+                margin: 1rem;
+                max-height: 85vh;
+            }
+
+            .modal-header h3 {
+                font-size: 1rem;
+            }
+
+            .modal-header p {
+                font-size: 0.8rem;
+            }
+
+            .prompt-content {
+                font-size: 0.75rem;
+            }
+
+            .line-number {
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* Extra small devices */
+            .container {
+                height: calc(100vh - 50px);
+                height: calc(100dvh - 50px);
+            }
+
+            .header {
+                padding: 0.4rem 0.75rem;
+            }
+
+            .logo {
+                font-size: 1.1rem;
+            }
+
+            .header-links {
+                margin-left: 0.75rem;
+                gap: 0.6rem;
+            }
+
+            .header-link {
+                font-size: 0.6rem;
+                gap: 0.25rem;
+            }
+
+            .view-prompt-btn {
+                font-size: 0.65rem;
+                padding: 0.4rem 1rem;
+            }
+
+            .view-prompt-btn svg {
+                width: 11px;
+                height: 11px;
+            }
+
+            .chat-messages {
+                padding: 0.65rem;
+            }
+
+            .chat-input-area {
+                padding: 0.65rem 0.75rem;
+                flex-shrink: 0;
+            }
+
+            .input-wrapper {
+                width: 100%;
+            }
+
+            .chat-input {
+                padding: 0.6rem 0.7rem;
+            }
+
+            .send-btn {
+                padding: 0.6rem 0.9rem;
+            }
+
+            .welcome-message {
+                padding: 1.75rem 2.25rem;
+                width: 92%;
+                max-width: 360px;
+            }
+
+            .welcome-message h2 {
+                font-size: 0.9rem;
+                margin-bottom: 0.85rem;
+                white-space: normal;
+                line-height: 1.25;
+            }
+
+            .welcome-message p {
+                font-size: 0.7rem;
+                line-height: 1.45;
+            }
+
+            .typing-placeholder {
+                font-size: 1.1rem;
+            }
+
+            .message-text {
+                font-size: 0.85rem;
+            }
+
+            .modal {
+                margin: 0.5rem;
             }
         }
 
@@ -842,33 +1103,78 @@
             background: var(--accent);
             border: none;
             border-radius: 20px;
-            padding: 3.5rem 6rem;
+            padding: 2.5rem 3.5rem;
             box-shadow: 0 0 50px var(--accent-glow), 0 0 100px rgba(94, 234, 212, 0.3);
             text-align: center;
             opacity: 1;
             transition: opacity 0.8s ease-in-out;
-            min-width: 700px;
+            width: 92%;
+            max-width: 700px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .welcome-message::before {
+            content: '';
+            position: relative;
         }
 
         .welcome-message.hide {
             opacity: 0;
         }
 
+        .welcome-countdown {
+            position: absolute;
+            bottom: 1rem;
+            right: 1.25rem;
+            font-size: 0.75rem;
+            color: var(--primary-bg);
+            opacity: 0.5;
+            font-weight: 500;
+        }
+
         .welcome-message h2 {
-            font-size: 2.25rem;
+            font-size: 1.15rem;
             font-weight: 700;
             color: var(--primary-bg);
             margin-bottom: 1rem;
             text-shadow: none;
-            white-space: nowrap;
+            white-space: normal;
+            line-height: 1.3;
+            padding: 0;
         }
 
         .welcome-message p {
-            font-size: 1.25rem;
+            font-size: 0.85rem;
             color: var(--primary-bg);
             line-height: 1.6;
-            max-width: 650px;
+            max-width: 100%;
             font-weight: 500;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Desktop welcome message */
+        @media (min-width: 769px) {
+            .welcome-message {
+                padding: 3.5rem 6rem;
+            }
+
+            .welcome-message h2 {
+                font-size: 2.2rem;
+                margin-bottom: 1.25rem;
+                white-space: nowrap;
+            }
+
+            .welcome-message p {
+                font-size: 1.15rem;
+                line-height: 1.65;
+                max-width: 600px;
+            }
         }
 
     </style>
@@ -880,7 +1186,8 @@
     <!-- Welcome Message -->
     <div class="welcome-message" id="welcomeMessage">
         <h2>Welcome to Transparent Intelligence!</h2>
-        <p>This app shows you what is usually hidden from view. This is simply a demonstration of transparent design in practice. Not another AI tool.</p>
+        <p>This is a demo of what is often hidden from you by design. It is not another AI tool competing for your attention.</p>
+        <div class="welcome-countdown" id="welcomeCountdown">8</div>
     </div>
 
     <!-- Header -->
@@ -1073,9 +1380,7 @@ Be concise, clear, and focus on making the invisible visible to everyday users. 
 
         // Typing Animation
         const typingMessages = [
-            "What's on your mind?",
-            "What would you like to explore?",
-            "What are you curious about?"
+            "Start chatting to see transparency insights appear here ->"
         ];
 
         let typingMessageIndex = 0;
@@ -1324,6 +1629,29 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
         }
 
         // Add message to chat
+        // Simple markdown-like formatting
+        function formatText(text) {
+            // Escape HTML to prevent XSS
+            const escapeHtml = (str) => {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            };
+
+            let formatted = escapeHtml(text);
+
+            // Convert markdown bold **text** to <strong>text</strong>
+            formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+            // Convert markdown italic *text* to <em>text</em>
+            formatted = formatted.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+            // Convert line breaks to <br>
+            formatted = formatted.replace(/\n/g, '<br>');
+
+            return formatted;
+        }
+
         function addMessage(role, content) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${role}`;
@@ -1341,7 +1669,7 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
 
             const textDiv = document.createElement('div');
             textDiv.className = 'message-text';
-            textDiv.textContent = content;
+            textDiv.innerHTML = formatText(content);
 
             contentDiv.appendChild(roleLabel);
             contentDiv.appendChild(textDiv);
@@ -1396,18 +1724,32 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
         // Welcome message animation
         window.addEventListener('DOMContentLoaded', () => {
             const welcomeMessage = document.getElementById('welcomeMessage');
+            const welcomeCountdown = document.getElementById('welcomeCountdown');
             let isVisible = true;
+            let countdown = 8;
 
-            // Hide message after 5 seconds
+            // Countdown timer
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                if (countdown >= 0) {
+                    welcomeCountdown.textContent = countdown;
+                } else {
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+
+            // Hide message after 8 seconds
             const autoHideTimeout = setTimeout(() => {
                 welcomeMessage.classList.add('hide');
                 isVisible = false;
-            }, 5000);
+                clearInterval(countdownInterval);
+            }, 8000);
 
             // Hide message on any click
             document.addEventListener('click', () => {
                 if (isVisible) {
                     clearTimeout(autoHideTimeout);
+                    clearInterval(countdownInterval);
                     welcomeMessage.classList.add('hide');
                     isVisible = false;
                 }
@@ -1435,7 +1777,9 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
             console.log('Canvas size:', canvas.width, 'x', canvas.height);
 
             const nodes = [];
-            const nodeCount = 180; // Increased for more coverage
+            // Reduce nodes on mobile for better performance
+            const isMobile = window.innerWidth <= 768;
+            const nodeCount = isMobile ? 80 : 180;
             const maxDistance = 150; // Connection distance
 
             class Node {

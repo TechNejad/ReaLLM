@@ -139,6 +139,7 @@
             border-right: 1px solid var(--border);
             background: rgba(26, 31, 58, 0.60);
             backdrop-filter: blur(8px);
+            position: relative;
         }
 
         .chat-messages {
@@ -148,6 +149,36 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            position: relative;
+        }
+
+        /* Typing Placeholder */
+        .typing-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            opacity: 0.6;
+            display: flex;
+            align-items: center;
+            gap: 0.1rem;
+        }
+
+        .typing-placeholder.hidden {
+            display: none;
+        }
+
+        .typing-cursor {
+            animation: blink 1s infinite;
+            opacity: 1;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
         }
 
         .message {
@@ -814,13 +845,9 @@
             padding: 3.5rem 6rem;
             box-shadow: 0 0 50px var(--accent-glow), 0 0 100px rgba(94, 234, 212, 0.3);
             text-align: center;
-            opacity: 0;
+            opacity: 1;
             transition: opacity 0.8s ease-in-out;
             min-width: 700px;
-        }
-
-        .welcome-message.show {
-            opacity: 1;
         }
 
         .welcome-message.hide {
@@ -894,6 +921,10 @@
         <!-- Left Panel: Chat -->
         <div class="chat-panel">
             <div class="chat-messages" id="chatMessages">
+                <div class="typing-placeholder" id="typingPlaceholder">
+                    <span id="typingText"></span>
+                    <span class="typing-cursor">|</span>
+                </div>
             </div>
 
             <div class="chat-input-area">
@@ -1040,6 +1071,61 @@ Be concise, clear, and focus on making the invisible visible to everyday users. 
         const modalOverlay = document.getElementById('modalOverlay');
         const promptDisplay = document.getElementById('promptDisplay');
 
+        // Typing Animation
+        const typingMessages = [
+            "What's on your mind?",
+            "What would you like to explore?",
+            "What are you curious about?"
+        ];
+
+        let typingMessageIndex = 0;
+        let typingCharIndex = 0;
+        let isDeleting = false;
+        let typingTimeout;
+
+        function typeText() {
+            const typingTextElement = document.getElementById('typingText');
+            const typingPlaceholder = document.getElementById('typingPlaceholder');
+
+            if (!typingTextElement || !typingPlaceholder) return;
+            if (typingPlaceholder.classList.contains('hidden')) return;
+
+            const currentMessage = typingMessages[typingMessageIndex];
+
+            if (isDeleting) {
+                // Erase text
+                typingTextElement.textContent = currentMessage.substring(0, typingCharIndex - 1);
+                typingCharIndex--;
+
+                if (typingCharIndex === 0) {
+                    isDeleting = false;
+                    typingMessageIndex = (typingMessageIndex + 1) % typingMessages.length;
+                    typingTimeout = setTimeout(typeText, 500);
+                } else {
+                    typingTimeout = setTimeout(typeText, 30);
+                }
+            } else {
+                // Type text
+                typingTextElement.textContent = currentMessage.substring(0, typingCharIndex + 1);
+                typingCharIndex++;
+
+                if (typingCharIndex === currentMessage.length) {
+                    isDeleting = true;
+                    typingTimeout = setTimeout(typeText, 2000);
+                } else {
+                    typingTimeout = setTimeout(typeText, 100);
+                }
+            }
+        }
+
+        function hideTypingPlaceholder() {
+            const typingPlaceholder = document.getElementById('typingPlaceholder');
+            if (typingPlaceholder) {
+                typingPlaceholder.classList.add('hidden');
+                clearTimeout(typingTimeout);
+            }
+        }
+
         // Initialize
         function init() {
             // Display system prompt in modal with file header and line numbers
@@ -1060,6 +1146,9 @@ Be concise, clear, and focus on making the invisible visible to everyday users. 
             const content = `<div class="prompt-content">${numberedLines}</div>`;
 
             promptDisplay.innerHTML = header + content;
+
+            // Start typing animation
+            typeText();
 
             // Event listeners
             sendBtn.addEventListener('click', handleSend);
@@ -1085,6 +1174,9 @@ Be concise, clear, and focus on making the invisible visible to everyday users. 
         async function handleSend() {
             const message = chatInput.value.trim();
             if (!message) return;
+
+            // Hide typing placeholder on first message
+            hideTypingPlaceholder();
 
             // Clear input
             chatInput.value = '';
@@ -1302,21 +1394,15 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
         }
 
         // Welcome message animation
-        window.addEventListener('load', () => {
+        window.addEventListener('DOMContentLoaded', () => {
             const welcomeMessage = document.getElementById('welcomeMessage');
-            let isVisible = false;
-
-            // Show message after brief delay
-            setTimeout(() => {
-                welcomeMessage.classList.add('show');
-                isVisible = true;
-            }, 300);
+            let isVisible = true;
 
             // Hide message after 5 seconds
             const autoHideTimeout = setTimeout(() => {
                 welcomeMessage.classList.add('hide');
                 isVisible = false;
-            }, 5300);
+            }, 5000);
 
             // Hide message on any click
             document.addEventListener('click', () => {

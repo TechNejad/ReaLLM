@@ -1405,10 +1405,9 @@ When safety, ethics, or uncertainty are relevant, you surface them explicitly ra
         const INTERPRETER_SYSTEM_PROMPT = `You analyze how system prompts shape specific AI responses. Your goal: make the invisible visible by showing users EXACTLY how hidden instructions influenced THIS particular response.
 
 CRITICAL RULES:
-- Quote actual phrases from the response to prove your points
+- Structure each insight with: brief general reason, then 1-2 specific quoted examples as proof
 - Be specific to THIS exchange, not generic system prompt descriptions
-- Keep insights under 25 words
-- Show, don't tell - use evidence from the response
+- Quote actual phrases from the response (use quotation marks)
 - Be concise, clear, and focus on making the invisible visible to everyday users. Avoid jargon.
 
 Return JSON with these fields:
@@ -1416,22 +1415,22 @@ Return JSON with these fields:
   "role_identity": {
     "label": "Model Role",
     "value": "What role is active (3-5 words)",
-    "detail": "Quote a phrase showing this role in action, then explain briefly"
+    "detail": "Start with general reason (1 sentence), then provide 1-2 quoted examples from the response showing this role in action"
   },
   "active_constraints": {
     "label": "Active Constraints",
     "value": "Which rule shaped this response (3-6 words)",
-    "detail": "Quote evidence of the constraint, then explain impact"
+    "detail": "Start with why this constraint was applied (1 sentence), then quote 1-2 specific phrases proving it"
   },
   "tone_stance": {
     "label": "Tone Choice",
     "value": "Describe the tone used (2-4 words)",
-    "detail": "Quote a phrase showing this tone, explain why it was chosen"
+    "detail": "Explain the tone choice briefly, then quote 1-2 phrases demonstrating it"
   },
   "design_choice": {
     "label": "Hidden Design",
     "value": "What was deliberately included/excluded (3-6 words)",
-    "detail": "Point out what the response does or avoids doing, with specific evidence"
+    "detail": "Explain what design choice was made and why, then point to 1-2 specific examples in the response"
   }
 }`;
 
@@ -1791,7 +1790,14 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
             messageDiv.appendChild(contentDiv);
 
             chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Smooth scroll to bottom
+            setTimeout(() => {
+                chatMessages.scrollTo({
+                    top: chatMessages.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }, 100);
         }
 
         // Add typing indicator
@@ -1821,7 +1827,14 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
             messageDiv.appendChild(contentDiv);
 
             chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Smooth scroll to bottom
+            setTimeout(() => {
+                chatMessages.scrollTo({
+                    top: chatMessages.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }, 100);
 
             return id;
         }

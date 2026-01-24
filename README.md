@@ -1,8 +1,6 @@
-# ReaLLM: Transparent Intelligence 
+# ReaLLM: Transparent Intelligence –> [live prototype](https://reallm.netlify.app/)
 
 **Making the invisible visible** – See the hidden instructions that shape AI responses in real-time.
-
----
 
 ## What is ReaLLM?
 
@@ -43,7 +41,7 @@ This project is part of ongoing research into AI safety and human-AI interaction
 
 **Research Question**: Can making system prompts visible reduce overreliance on AI and improve users' mental models of how AI works?
 
-Read the full paper: [Project_Description.pdf](Project_%20Description.pdf)
+Read the full paper: [Project Description.pdf](Assets/ReaLLM_Paper.pdf)
 
 ## Design Philosophy
 

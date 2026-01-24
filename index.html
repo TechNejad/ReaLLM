@@ -1154,6 +1154,22 @@
             }
         }
 
+        /* Welcome Message Backdrop */
+        .welcome-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 199;
+            backdrop-filter: blur(8px);
+            background: rgba(10, 14, 39, 0.3);
+            transition: opacity 0.8s ease-in-out;
+            opacity: 1;
+        }
+
+        .welcome-backdrop.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
         /* Welcome Message */
         .welcome-message {
             position: fixed;
@@ -1253,11 +1269,14 @@
     <!-- Neural network canvas background -->
     <canvas id="neural-canvas"></canvas>
 
+    <!-- Welcome Message Backdrop -->
+    <div class="welcome-backdrop" id="welcomeBackdrop"></div>
+
     <!-- Welcome Message -->
     <div class="welcome-message" id="welcomeMessage">
         <h2>Welcome to Transparent Intelligence!</h2>
-        <p>This is a demo of what is often hidden from you by design. It is not another AI tool competing for your attention.</p>
-        <div class="welcome-countdown" id="welcomeCountdown">8</div>
+        <p>This demo is built to show what is often hidden from you by design. It is not another AI tool competing for your attention.</p>
+        <div class="welcome-countdown" id="welcomeCountdown">5</div>
     </div>
 
     <!-- Mobile Transparency Toggle Button -->
@@ -1402,35 +1421,48 @@ Your goal is not to appear human or agreeable, but to be legible, bounded, and r
 
 When safety, ethics, or uncertainty are relevant, you surface them explicitly rather than hiding them behind confident language.`;
 
-        const INTERPRETER_SYSTEM_PROMPT = `You analyze how system prompts shape specific AI responses. Your goal: make the invisible visible by showing users EXACTLY how hidden instructions influenced THIS particular response.
+        const INTERPRETER_SYSTEM_PROMPT = `You analyze how system prompts shape AI responses. Your goal: reveal the INVISIBLE influence of hidden instructions. Don't summarize what users can already see - show them what they CAN'T see.
 
 CRITICAL RULES:
-- Structure each insight with: brief general reason, then 1-2 specific quoted examples as proof
-- Be specific to THIS exchange, not generic system prompt descriptions
-- Quote actual phrases from the response (use quotation marks)
-- Be concise, clear, and focus on making the invisible visible to everyday users. Avoid jargon.
+- Keep insights SHORT (max 2 sentences total)
+- Only quote when it proves something NON-OBVIOUS about the system prompt's influence
+- Don't paraphrase the response - users can read it themselves
+- Focus on revealing HIDDEN constraints, not restating visible content
+- Be selective: quote ONLY when it's the best evidence of invisible design
+- Avoid jargon. Write for everyday users.
+
+When to be MINIMAL (1 sentence, no quotes):
+- If the influence is obvious from reading the response
+- If quoting would just repeat what's already visible
+Example: "Asks clarifying questions to avoid assuming user intent"
+
+When to USE QUOTES (2 sentences with 1-2 quotes):
+- When showing a non-obvious design choice
+- When the phrasing reveals a hidden constraint
+- When boundary-setting language is deliberately used
+Example: "Explicitly states boundaries to maintain transparency. Says 'I'm not a substitute for a qualified physics professor' to set clear role limits"
 
 Return JSON with these fields:
 {
   "role_identity": {
     "label": "Model Role",
     "value": "What role is active (3-5 words)",
-    "detail": "Start with general reason (1 sentence), then provide 1-2 quoted examples from the response showing this role in action"
+    "detail": "1-2 sentences. Be minimal unless quotes reveal something non-obvious"
   },
   "active_constraints": {
     "label": "Active Constraints",
     "value": "Which rule shaped this response (3-6 words)",
-    "detail": "Start with why this constraint was applied (1 sentence), then quote 1-2 specific phrases proving it"
+    "detail": "1-2 sentences. Quote only if it proves hidden constraint enforcement"
   },
   "tone_stance": {
     "label": "Tone Choice",
     "value": "Describe the tone used (2-4 words)",
-    "detail": "Explain the tone choice briefly, then quote 1-2 phrases demonstrating it"
+    "detail": "1-2 sentences. Quote only if phrasing shows deliberate tone choice"
   },
   "design_choice": {
     "label": "Hidden Design",
     "value": "What was deliberately included/excluded (3-6 words)",
-    "detail": "Explain what design choice was made and why, then point to 1-2 specific examples in the response"
+    "detail": "1-2 sentences. Quote when revealing boundary-setting or deliberate design choices"
   }
 }`;
 
@@ -1455,7 +1487,9 @@ Return JSON with these fields:
 
         // Typing Animation
         const typingMessages = [
-            "Start chatting to see transparency insights appear here ->"
+            "What's on your mind?",
+            "What would you like to explore?",
+            "What are you curious about?"
         ];
 
         let typingMessageIndex = 0;
@@ -1850,9 +1884,10 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
         // Welcome message animation
         window.addEventListener('DOMContentLoaded', () => {
             const welcomeMessage = document.getElementById('welcomeMessage');
+            const welcomeBackdrop = document.getElementById('welcomeBackdrop');
             const welcomeCountdown = document.getElementById('welcomeCountdown');
             let isVisible = true;
-            let countdown = 8;
+            let countdown = 5;
 
             // Countdown timer
             const countdownInterval = setInterval(() => {
@@ -1864,12 +1899,13 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
                 }
             }, 1000);
 
-            // Hide message after 8 seconds
+            // Hide message after 5 seconds
             const autoHideTimeout = setTimeout(() => {
                 welcomeMessage.classList.add('hide');
+                welcomeBackdrop.classList.add('hide');
                 isVisible = false;
                 clearInterval(countdownInterval);
-            }, 8000);
+            }, 5000);
 
             // Hide message on any click
             document.addEventListener('click', () => {
@@ -1877,6 +1913,7 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
                     clearTimeout(autoHideTimeout);
                     clearInterval(countdownInterval);
                     welcomeMessage.classList.add('hide');
+                    welcomeBackdrop.classList.add('hide');
                     isVisible = false;
                 }
             }, { once: false });

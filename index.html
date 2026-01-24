@@ -653,11 +653,6 @@
             font-style: normal;
         }
 
-        .info-icon:hover::after {
-            opacity: 1;
-            transform: translateX(-50%) translateY(-5px);
-        }
-
         .info-icon::before {
             content: '';
             position: absolute;
@@ -671,8 +666,16 @@
             transition: opacity 0.3s;
         }
 
-        .info-icon:hover::before {
-            opacity: 1;
+        /* Only show tooltip on hover for desktop/non-touch devices */
+        @media (hover: hover) and (pointer: fine) {
+            .info-icon:hover::after {
+                opacity: 1;
+                transform: translateX(-50%) translateY(-5px);
+            }
+
+            .info-icon:hover::before {
+                opacity: 1;
+            }
         }
 
         .modal-header svg {
@@ -846,7 +849,7 @@
         }
 
         @media (max-width: 768px) {
-            /* Hide transparency panel on mobile */
+            /* Mobile transparency panel as overlay */
             .container {
                 grid-template-columns: 1fr;
                 height: calc(100vh - 60px);
@@ -854,7 +857,63 @@
             }
 
             .transparency-panel {
+                position: fixed;
+                right: -100%;
+                top: 60px;
+                width: 85%;
+                max-width: 360px;
+                height: calc(100vh - 60px);
+                height: calc(100dvh - 60px);
+                z-index: 150;
+                transition: right 0.3s ease-out;
+                box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
+            }
+
+            .transparency-panel.mobile-visible {
+                right: 0;
+            }
+
+            /* Mobile transparency toggle button */
+            .mobile-transparency-toggle {
+                display: flex;
+                position: fixed;
+                bottom: 5.5rem;
+                right: 1rem;
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                background: var(--accent);
+                color: var(--primary-bg);
+                border: none;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 20px var(--accent-glow);
+                cursor: pointer;
+                align-items: center;
+                justify-content: center;
+                z-index: 140;
+                transition: all 0.3s;
+            }
+
+            .mobile-transparency-toggle:active {
+                transform: scale(0.95);
+            }
+
+            .mobile-transparency-toggle svg {
+                width: 24px;
+                height: 24px;
+            }
+
+            /* Overlay backdrop when panel is open */
+            .mobile-transparency-backdrop {
                 display: none;
+                position: fixed;
+                inset: 0;
+                top: 60px;
+                background: rgba(10, 14, 39, 0.5);
+                z-index: 145;
+            }
+
+            .mobile-transparency-backdrop.visible {
+                display: block;
             }
 
             /* Ensure chat panel takes full height */
@@ -873,9 +932,10 @@
 
             /* Header adjustments */
             .header {
-                padding: 0.5rem 1rem;
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
+                padding: 0.75rem 1rem;
+                grid-template-columns: 1fr auto;
+                gap: 1rem;
+                align-items: center;
             }
 
             .logo-section {
@@ -905,7 +965,7 @@
                 justify-self: end;
                 margin-left: 0;
                 font-size: 0.7rem;
-                padding: 0.5rem 1.25rem;
+                padding: 0.5rem 1rem;
             }
 
             /* Chat area */
@@ -1014,7 +1074,8 @@
             }
 
             .header {
-                padding: 0.4rem 0.75rem;
+                padding: 0.6rem 0.85rem;
+                grid-template-columns: 1fr auto;
             }
 
             .logo {
@@ -1033,12 +1094,12 @@
 
             .view-prompt-btn {
                 font-size: 0.65rem;
-                padding: 0.4rem 1rem;
+                padding: 0.45rem 0.95rem;
             }
 
             .view-prompt-btn svg {
-                width: 11px;
-                height: 11px;
+                width: 10px;
+                height: 10px;
             }
 
             .chat-messages {
@@ -1175,6 +1236,15 @@
                 line-height: 1.65;
                 max-width: 600px;
             }
+
+            /* Hide mobile toggle button on desktop */
+            .mobile-transparency-toggle {
+                display: none;
+            }
+
+            .mobile-transparency-backdrop {
+                display: none;
+            }
         }
 
     </style>
@@ -1189,6 +1259,16 @@
         <p>This is a demo of what is often hidden from you by design. It is not another AI tool competing for your attention.</p>
         <div class="welcome-countdown" id="welcomeCountdown">8</div>
     </div>
+
+    <!-- Mobile Transparency Toggle Button -->
+    <button class="mobile-transparency-toggle" id="mobileTransparencyToggle" aria-label="Toggle transparency panel">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+    </button>
+
+    <!-- Mobile Transparency Backdrop -->
+    <div class="mobile-transparency-backdrop" id="mobileTransparencyBackdrop"></div>
 
     <!-- Header -->
     <div class="header">
@@ -1322,43 +1402,38 @@ Your goal is not to appear human or agreeable, but to be legible, bounded, and r
 
 When safety, ethics, or uncertainty are relevant, you surface them explicitly rather than hiding them behind confident language.`;
 
-        const INTERPRETER_SYSTEM_PROMPT = `You are an interpreter model. Your job is NOT to respond to the user's question, but to analyze what constraints and guidelines are shaping the main AI assistant's response.
+        const INTERPRETER_SYSTEM_PROMPT = `You analyze how system prompts shape specific AI responses. Your goal: make the invisible visible by showing users EXACTLY how hidden instructions influenced THIS particular response.
 
-You receive:
-1. The system prompt that guides the main model
-2. The conversation turn (user message and assistant response)
+CRITICAL RULES:
+- Quote actual phrases from the response to prove your points
+- Be specific to THIS exchange, not generic system prompt descriptions
+- Keep insights under 25 words
+- Show, don't tell - use evidence from the response
+- Be concise, clear, and focus on making the invisible visible to everyday users. Avoid jargon.
 
-Your task: Generate short, structured insights that explain to a non-technical user:
-- What role/identity is the model playing?
-- What constraints are active? (e.g., uncertainty acknowledgment, boundary-setting, tone requirements)
-- What stance or tone is being used and why?
-- Any uncertainty indicators or limitations being surfaced
-
-Return your analysis as a JSON object with these fields:
+Return JSON with these fields:
 {
   "role_identity": {
     "label": "Model Role",
-    "value": "brief description (5-8 words)",
-    "detail": "1-2 sentence explanation of what role the model is playing"
+    "value": "What role is active (3-5 words)",
+    "detail": "Quote a phrase showing this role in action, then explain briefly"
   },
   "active_constraints": {
     "label": "Active Constraints",
-    "value": "brief summary (5-8 words)",
-    "detail": "1-2 sentence explanation of what rules or boundaries are being followed"
+    "value": "Which rule shaped this response (3-6 words)",
+    "detail": "Quote evidence of the constraint, then explain impact"
   },
   "tone_stance": {
-    "label": "Tone & Stance",
-    "value": "brief description (3-5 words)",
-    "detail": "1-2 sentence explanation of the communication style being used"
+    "label": "Tone Choice",
+    "value": "Describe the tone used (2-4 words)",
+    "detail": "Quote a phrase showing this tone, explain why it was chosen"
   },
-  "uncertainty_indicators": {
-    "label": "Uncertainty Signals",
-    "value": "brief status (3-5 words)",
-    "detail": "1-2 sentence explanation of how the model is handling knowledge limits or expressing uncertainty"
+  "design_choice": {
+    "label": "Hidden Design",
+    "value": "What was deliberately included/excluded (3-6 words)",
+    "detail": "Point out what the response does or avoids doing, with specific evidence"
   }
-}
-
-Be concise, clear, and focus on making the invisible visible to everyday users. Avoid jargon.`;
+}`;
 
         // Initialize Groq
         const groq = new Groq({
@@ -1368,6 +1443,7 @@ Be concise, clear, and focus on making the invisible visible to everyday users. 
 
         // State
         let conversationHistory = [];
+        let hasShownMobileTransparency = false;
 
         // DOM Elements
         const chatMessages = document.getElementById('chatMessages');
@@ -1473,6 +1549,21 @@ Be concise, clear, and focus on making the invisible visible to everyday users. 
                     modalOverlay.classList.remove('active');
                 }
             });
+
+            // Mobile transparency panel toggle
+            const mobileToggle = document.getElementById('mobileTransparencyToggle');
+            const mobileBackdrop = document.getElementById('mobileTransparencyBackdrop');
+            const transparencyPanel = document.querySelector('.transparency-panel');
+
+            if (mobileToggle && mobileBackdrop && transparencyPanel) {
+                const togglePanel = () => {
+                    transparencyPanel.classList.toggle('mobile-visible');
+                    mobileBackdrop.classList.toggle('visible');
+                };
+
+                mobileToggle.addEventListener('click', togglePanel);
+                mobileBackdrop.addEventListener('click', togglePanel);
+            }
         }
 
         // Handle send message
@@ -1589,6 +1680,28 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
                     if (insight && insight.label && insight.value) {
                         const card = createInsightCard(insight);
                         transparencyContent.appendChild(card);
+                    }
+                }
+
+                // Auto-show transparency panel on mobile after first message
+                if (!hasShownMobileTransparency && window.innerWidth <= 768) {
+                    hasShownMobileTransparency = true;
+
+                    const mobileBackdrop = document.getElementById('mobileTransparencyBackdrop');
+                    const transparencyPanel = document.querySelector('.transparency-panel');
+
+                    if (mobileBackdrop && transparencyPanel) {
+                        // Small delay to let insights render
+                        setTimeout(() => {
+                            transparencyPanel.classList.add('mobile-visible');
+                            mobileBackdrop.classList.add('visible');
+
+                            // Auto-hide after 4 seconds
+                            setTimeout(() => {
+                                transparencyPanel.classList.remove('mobile-visible');
+                                mobileBackdrop.classList.remove('visible');
+                            }, 4000);
+                        }, 500);
                     }
                 }
             } catch (error) {

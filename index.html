@@ -910,10 +910,17 @@
                 top: 60px;
                 background: rgba(10, 14, 39, 0.5);
                 z-index: 145;
+                pointer-events: auto;
             }
 
             .mobile-transparency-backdrop.visible {
                 display: block;
+            }
+
+            /* Ensure panel is above backdrop and fully interactive */
+            .transparency-panel.mobile-visible {
+                right: 0;
+                pointer-events: auto;
             }
 
             /* Ensure chat panel takes full height */
@@ -1589,13 +1596,32 @@ Return JSON with these fields:
             const transparencyPanel = document.querySelector('.transparency-panel');
 
             if (mobileToggle && mobileBackdrop && transparencyPanel) {
+                const openPanel = () => {
+                    transparencyPanel.classList.add('mobile-visible');
+                    mobileBackdrop.classList.add('visible');
+                };
+
+                const closePanel = () => {
+                    transparencyPanel.classList.remove('mobile-visible');
+                    mobileBackdrop.classList.remove('visible');
+                };
+
                 const togglePanel = () => {
-                    transparencyPanel.classList.toggle('mobile-visible');
-                    mobileBackdrop.classList.toggle('visible');
+                    if (transparencyPanel.classList.contains('mobile-visible')) {
+                        closePanel();
+                    } else {
+                        openPanel();
+                    }
                 };
 
                 mobileToggle.addEventListener('click', togglePanel);
-                mobileBackdrop.addEventListener('click', togglePanel);
+
+                // Only close when clicking the backdrop itself, not the panel
+                mobileBackdrop.addEventListener('click', (e) => {
+                    if (e.target === mobileBackdrop) {
+                        closePanel();
+                    }
+                });
             }
         }
 
@@ -1720,12 +1746,12 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
                 if (!hasShownMobileTransparency && window.innerWidth <= 768) {
                     hasShownMobileTransparency = true;
 
-                    const mobileBackdrop = document.getElementById('mobileTransparencyBackdrop');
-                    const transparencyPanel = document.querySelector('.transparency-panel');
+                    // Small delay to let insights render
+                    setTimeout(() => {
+                        const transparencyPanel = document.querySelector('.transparency-panel');
+                        const mobileBackdrop = document.getElementById('mobileTransparencyBackdrop');
 
-                    if (mobileBackdrop && transparencyPanel) {
-                        // Small delay to let insights render
-                        setTimeout(() => {
+                        if (transparencyPanel && mobileBackdrop) {
                             transparencyPanel.classList.add('mobile-visible');
                             mobileBackdrop.classList.add('visible');
 
@@ -1734,8 +1760,8 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
                                 transparencyPanel.classList.remove('mobile-visible');
                                 mobileBackdrop.classList.remove('visible');
                             }, 4000);
-                        }, 500);
-                    }
+                        }
+                    }, 500);
                 }
             } catch (error) {
                 console.error('Interpreter error:', error);

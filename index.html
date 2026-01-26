@@ -430,7 +430,7 @@
             border: 2px solid var(--border);
             border-radius: 8px;
             padding: 1rem;
-            transition: all 0.3s;
+            transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
             box-shadow: var(--shadow-sm);
             touch-action: manipulation;
         }
@@ -478,7 +478,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s;
+            transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
             flex-shrink: 0;
         }
 
@@ -502,7 +502,7 @@
         .insight-detail {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease-out;
+            transition: max-height 0.2s ease-out;
             color: var(--text-secondary);
             font-size: 0.875rem;
             line-height: 1.6;
@@ -884,18 +884,12 @@
                 pointer-events: none;
                 /* Prevent scroll propagation */
                 overscroll-behavior: contain;
-                -webkit-overflow-scrolling: touch;
             }
 
             .transparency-panel.mobile-visible {
                 right: 0;
                 pointer-events: auto !important;
                 z-index: 155 !important;
-            }
-
-            /* Ensure all panel content is interactive */
-            .transparency-panel.mobile-visible * {
-                pointer-events: auto;
             }
 
             /* Prevent body scroll when panel is open */
@@ -910,11 +904,6 @@
                 cursor: pointer;
                 -webkit-tap-highlight-color: rgba(94, 234, 212, 0.2);
                 touch-action: manipulation;
-            }
-
-            .insight-card:active {
-                transform: scale(0.98);
-                border-color: var(--accent);
             }
 
             .insight-expand {
@@ -1703,8 +1692,8 @@ Return JSON with these fields:
                 });
             }
 
-            // Load placeholder insights for testing
-            loadPlaceholderInsights();
+            // Don't load placeholder insights by default - panel should be empty
+            // Placeholders only for offline/testing mode
         }
 
         // Handle send message

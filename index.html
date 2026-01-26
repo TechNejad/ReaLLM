@@ -430,9 +430,9 @@
             border: 2px solid var(--border);
             border-radius: 8px;
             padding: 1rem;
-            transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
             box-shadow: var(--shadow-sm);
-            touch-action: manipulation;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
         }
 
         .insight-card:hover {
@@ -478,8 +478,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
             flex-shrink: 0;
+            transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
         }
 
         .insight-card.expanded .insight-expand {
@@ -878,18 +878,13 @@
                 max-width: 360px;
                 height: calc(100vh - 60px);
                 height: calc(100dvh - 60px);
-                z-index: 150;
+                z-index: 155;
                 transition: right 0.3s ease-out;
                 box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
-                pointer-events: none;
-                /* Prevent scroll propagation */
-                overscroll-behavior: contain;
             }
 
             .transparency-panel.mobile-visible {
                 right: 0;
-                pointer-events: auto !important;
-                z-index: 155 !important;
             }
 
             /* Prevent body scroll when panel is open */
@@ -897,13 +892,10 @@
                 overflow: hidden;
             }
 
-            /* Better touch targets for mobile */
+            /* Mobile card styles - simplified */
             .insight-card {
                 padding: 1.25rem;
                 margin-bottom: 1rem;
-                cursor: pointer;
-                -webkit-tap-highlight-color: rgba(94, 234, 212, 0.2);
-                touch-action: manipulation;
             }
 
             .insight-expand {
@@ -914,12 +906,6 @@
             .insight-expand svg {
                 width: 18px;
                 height: 18px;
-            }
-
-            .insight-header {
-                cursor: pointer;
-                -webkit-user-select: none;
-                user-select: none;
             }
 
             /* Mobile transparency toggle button */
@@ -1866,46 +1852,15 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
                 <div class="insight-detail">${insight.detail}</div>
             `;
 
-            // Simple click handler - browser converts taps to clicks on mobile
-            card.addEventListener('click', (e) => {
-                e.stopPropagation();
-                card.classList.toggle('expanded');
-            });
+            // Ultra-simple click handler
+            card.addEventListener('click', function() {
+                this.classList.toggle('expanded');
+            }, false);
 
             return card;
         }
 
-        // Load placeholder insights (for testing without API)
-        function loadPlaceholderInsights() {
-            const placeholderInsights = {
-                goal_intent: {
-                    label: "Goal Identified",
-                    value: "Provide clear explanation",
-                    detail: "The system identified this as an educational request and prioritized clarity and completeness in the response structure."
-                },
-                active_constraints: {
-                    label: "Active Constraints",
-                    value: "Factual accuracy required",
-                    detail: "Response follows guidelines to be informative while remaining grounded in verifiable information without speculation."
-                },
-                tone_stance: {
-                    label: "Tone Choice",
-                    value: "Helpful and professional",
-                    detail: "A balanced, instructional tone was selected to match the educational context of the query."
-                },
-                design_choice: {
-                    label: "Hidden Design",
-                    value: "Structured with examples",
-                    detail: "The response deliberately includes practical examples to enhance understanding, following design patterns for technical explanations."
-                }
-            };
-
-            transparencyContent.innerHTML = '';
-            for (const [key, insight] of Object.entries(placeholderInsights)) {
-                const card = createInsightCard(insight);
-                transparencyContent.appendChild(card);
-            }
-        }
+        // Placeholder function removed - panel should always be empty until API responds
 
         // Add message to chat
         // Simple markdown-like formatting

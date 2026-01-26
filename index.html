@@ -144,7 +144,7 @@
         /* Main Layout */
         .container {
             display: grid;
-            grid-template-columns: 1fr 400px;
+            grid-template-columns: 1fr;
             height: calc(100vh - 73px);
             gap: 0;
             position: relative;
@@ -159,6 +159,8 @@
             background: rgba(26, 31, 58, 0.60);
             backdrop-filter: blur(8px);
             position: relative;
+            /* Desktop: Leave space for transparency panel */
+            margin-right: 400px;
         }
 
         .chat-messages {
@@ -383,6 +385,13 @@
             display: flex;
             flex-direction: column;
             overflow-y: auto;
+            /* Desktop: Position as right column */
+            position: fixed;
+            right: 0;
+            top: 73px;
+            width: 400px;
+            height: calc(100vh - 73px);
+            z-index: 1;
         }
 
         .panel-header {
@@ -856,6 +865,10 @@
                 height: calc(100dvh - 60px); /* Dynamic viewport height for mobile browsers */
             }
 
+            .chat-panel {
+                margin-right: 0; /* Remove desktop spacing */
+            }
+
             .transparency-panel {
                 position: fixed;
                 right: -100%;
@@ -867,10 +880,57 @@
                 z-index: 150;
                 transition: right 0.3s ease-out;
                 box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
+                pointer-events: none;
+                /* Prevent scroll propagation */
+                overscroll-behavior: contain;
+                -webkit-overflow-scrolling: touch;
             }
 
             .transparency-panel.mobile-visible {
                 right: 0;
+                pointer-events: auto !important;
+                z-index: 155 !important;
+            }
+
+            /* Ensure all panel content is interactive */
+            .transparency-panel.mobile-visible * {
+                pointer-events: auto;
+            }
+
+            /* Prevent body scroll when panel is open */
+            body.panel-open {
+                overflow: hidden;
+                position: fixed;
+                width: 100%;
+            }
+
+            /* Better touch targets for mobile */
+            .insight-card {
+                padding: 1.25rem;
+                margin-bottom: 1rem;
+                cursor: pointer;
+                -webkit-tap-highlight-color: rgba(94, 234, 212, 0.2);
+            }
+
+            .insight-card:active {
+                transform: scale(0.98);
+                border-color: var(--accent);
+            }
+
+            .insight-expand {
+                width: 44px;
+                height: 44px;
+            }
+
+            .insight-expand svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            .insight-header {
+                cursor: pointer;
+                -webkit-user-select: none;
+                user-select: none;
             }
 
             /* Mobile transparency toggle button */
@@ -889,7 +949,7 @@
                 cursor: pointer;
                 align-items: center;
                 justify-content: center;
-                z-index: 140;
+                z-index: 160;
                 transition: all 0.3s;
             }
 
@@ -906,21 +966,28 @@
             .mobile-transparency-backdrop {
                 display: none;
                 position: fixed;
-                inset: 0;
+                left: 0;
+                right: 0;
                 top: 60px;
+                bottom: 0;
                 background: rgba(10, 14, 39, 0.5);
                 z-index: 145;
-                pointer-events: auto;
+                pointer-events: none;
+                transition: right 0.3s ease-out;
             }
 
             .mobile-transparency-backdrop.visible {
                 display: block;
+                pointer-events: auto;
+                /* Don't cover the panel area - leave space on the right */
+                right: 85%;
             }
 
-            /* Ensure panel is above backdrop and fully interactive */
-            .transparency-panel.mobile-visible {
-                right: 0;
-                pointer-events: auto;
+            /* For wider panels on smaller screens */
+            @media (min-width: 360px) and (max-width: 768px) {
+                .mobile-transparency-backdrop.visible {
+                    right: 360px;
+                }
             }
 
             /* Ensure chat panel takes full height */
@@ -971,34 +1038,51 @@
             .view-prompt-btn {
                 justify-self: end;
                 margin-left: 0;
-                font-size: 0.7rem;
-                padding: 0.5rem 1rem;
+                font-size: 0.6rem;
+                padding: 0.4rem 0.8rem;
+                gap: 0.3rem;
+            }
+
+            .view-prompt-btn svg {
+                width: 12px;
+                height: 12px;
             }
 
             /* Chat area */
             .chat-messages {
                 padding: 0.75rem;
+                padding-bottom: 1rem;
             }
 
             .chat-input-area {
-                padding: 0.75rem 1rem;
+                padding: 0.75rem;
                 flex-shrink: 0;
+                position: sticky;
+                bottom: 0;
+                background: rgba(33, 39, 68, 0.95);
+                backdrop-filter: blur(10px);
             }
 
             .input-wrapper {
                 gap: 0.5rem;
                 width: 100%;
+                align-items: stretch;
             }
 
             .chat-input {
                 font-size: 16px; /* Prevent iOS zoom on focus */
-                padding: 0.65rem 0.75rem;
-                min-height: 44px;
+                padding: 0.75rem;
+                min-height: 48px;
+                line-height: 1.4;
             }
 
             .send-btn {
-                padding: 0.65rem 1rem;
-                font-size: 0.85rem;
+                padding: 0.75rem 1.1rem;
+                font-size: 0.875rem;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 flex-shrink: 0;
             }
 
@@ -1100,8 +1184,9 @@
             }
 
             .view-prompt-btn {
-                font-size: 0.65rem;
-                padding: 0.45rem 0.95rem;
+                font-size: 0.55rem;
+                padding: 0.35rem 0.7rem;
+                gap: 0.25rem;
             }
 
             .view-prompt-btn svg {
@@ -1111,23 +1196,29 @@
 
             .chat-messages {
                 padding: 0.65rem;
+                padding-bottom: 0.75rem;
             }
 
             .chat-input-area {
-                padding: 0.65rem 0.75rem;
+                padding: 0.65rem;
                 flex-shrink: 0;
+                position: sticky;
+                bottom: 0;
             }
 
             .input-wrapper {
                 width: 100%;
+                align-items: stretch;
             }
 
             .chat-input {
-                padding: 0.6rem 0.7rem;
+                padding: 0.7rem;
+                min-height: 46px;
             }
 
             .send-btn {
-                padding: 0.6rem 0.9rem;
+                padding: 0.7rem 1rem;
+                min-height: 46px;
             }
 
             .welcome-message {
@@ -1352,27 +1443,27 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Right Panel: Transparency -->
-        <div class="transparency-panel">
-            <div class="panel-header">
-                <h3>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Transparency Panel
-                </h3>
-                <p>See hidden instructions shaping responses</p>
-            </div>
+    <!-- Right Panel: Transparency (Moved outside container for mobile z-index) -->
+    <div class="transparency-panel">
+        <div class="panel-header">
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Transparency Panel
+            </h3>
+            <p>See hidden instructions shaping responses</p>
+        </div>
 
-            <div class="transparency-content" id="transparencyContent">
-                <div class="empty-state">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <h4>No insights yet</h4>
-                    <p>Start chatting to see transparency insights</p>
-                </div>
+        <div class="transparency-content" id="transparencyContent">
+            <div class="empty-state">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h4>No insights yet</h4>
+                <p>Start chatting to see transparency insights</p>
             </div>
         </div>
     </div>
@@ -1599,11 +1690,13 @@ Return JSON with these fields:
                 const openPanel = () => {
                     transparencyPanel.classList.add('mobile-visible');
                     mobileBackdrop.classList.add('visible');
+                    document.body.classList.add('panel-open');
                 };
 
                 const closePanel = () => {
                     transparencyPanel.classList.remove('mobile-visible');
                     mobileBackdrop.classList.remove('visible');
+                    document.body.classList.remove('panel-open');
                 };
 
                 const togglePanel = () => {
@@ -1622,7 +1715,15 @@ Return JSON with these fields:
                         closePanel();
                     }
                 });
+
+                // Prevent touch event propagation from panel to backdrop
+                transparencyPanel.addEventListener('touchstart', (e) => {
+                    e.stopPropagation();
+                }, { passive: true });
             }
+
+            // Load placeholder insights for testing
+            loadPlaceholderInsights();
         }
 
         // Handle send message
@@ -1754,11 +1855,13 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
                         if (transparencyPanel && mobileBackdrop) {
                             transparencyPanel.classList.add('mobile-visible');
                             mobileBackdrop.classList.add('visible');
+                            document.body.classList.add('panel-open');
 
                             // Auto-hide after 4 seconds
                             setTimeout(() => {
                                 transparencyPanel.classList.remove('mobile-visible');
                                 mobileBackdrop.classList.remove('visible');
+                                document.body.classList.remove('panel-open');
                             }, 4000);
                         }
                     }, 500);
@@ -1793,11 +1896,53 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
                 <div class="insight-detail">${insight.detail}</div>
             `;
 
-            card.addEventListener('click', () => {
+            // Handle both click and touch events for mobile
+            const toggleCard = (e) => {
+                e.stopPropagation();
                 card.classList.toggle('expanded');
-            });
+            };
+
+            card.addEventListener('click', toggleCard);
+
+            // Add touch support for better mobile experience
+            card.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                toggleCard(e);
+            }, { passive: false });
 
             return card;
+        }
+
+        // Load placeholder insights (for testing without API)
+        function loadPlaceholderInsights() {
+            const placeholderInsights = {
+                goal_intent: {
+                    label: "Goal Identified",
+                    value: "Provide clear explanation",
+                    detail: "The system identified this as an educational request and prioritized clarity and completeness in the response structure."
+                },
+                active_constraints: {
+                    label: "Active Constraints",
+                    value: "Factual accuracy required",
+                    detail: "Response follows guidelines to be informative while remaining grounded in verifiable information without speculation."
+                },
+                tone_stance: {
+                    label: "Tone Choice",
+                    value: "Helpful and professional",
+                    detail: "A balanced, instructional tone was selected to match the educational context of the query."
+                },
+                design_choice: {
+                    label: "Hidden Design",
+                    value: "Structured with examples",
+                    detail: "The response deliberately includes practical examples to enhance understanding, following design patterns for technical explanations."
+                }
+            };
+
+            transparencyContent.innerHTML = '';
+            for (const [key, insight] of Object.entries(placeholderInsights)) {
+                const card = createInsightCard(insight);
+                transparencyContent.appendChild(card);
+            }
         }
 
         // Add message to chat

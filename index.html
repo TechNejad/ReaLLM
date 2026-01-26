@@ -432,6 +432,7 @@
             padding: 1rem;
             transition: all 0.3s;
             box-shadow: var(--shadow-sm);
+            touch-action: manipulation;
         }
 
         .insight-card:hover {
@@ -900,8 +901,6 @@
             /* Prevent body scroll when panel is open */
             body.panel-open {
                 overflow: hidden;
-                position: fixed;
-                width: 100%;
             }
 
             /* Better touch targets for mobile */
@@ -910,6 +909,7 @@
                 margin-bottom: 1rem;
                 cursor: pointer;
                 -webkit-tap-highlight-color: rgba(94, 234, 212, 0.2);
+                touch-action: manipulation;
             }
 
             .insight-card:active {
@@ -966,28 +966,14 @@
             .mobile-transparency-backdrop {
                 display: none;
                 position: fixed;
-                left: 0;
-                right: 0;
+                inset: 0;
                 top: 60px;
-                bottom: 0;
                 background: rgba(10, 14, 39, 0.5);
                 z-index: 145;
-                pointer-events: none;
-                transition: right 0.3s ease-out;
             }
 
             .mobile-transparency-backdrop.visible {
                 display: block;
-                pointer-events: auto;
-                /* Don't cover the panel area - leave space on the right */
-                right: 85%;
-            }
-
-            /* For wider panels on smaller screens */
-            @media (min-width: 360px) and (max-width: 768px) {
-                .mobile-transparency-backdrop.visible {
-                    right: 360px;
-                }
             }
 
             /* Ensure chat panel takes full height */
@@ -1715,11 +1701,6 @@ Return JSON with these fields:
                         closePanel();
                     }
                 });
-
-                // Prevent touch event propagation from panel to backdrop
-                transparencyPanel.addEventListener('touchstart', (e) => {
-                    e.stopPropagation();
-                }, { passive: true });
             }
 
             // Load placeholder insights for testing
@@ -1896,19 +1877,11 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
                 <div class="insight-detail">${insight.detail}</div>
             `;
 
-            // Handle both click and touch events for mobile
-            const toggleCard = (e) => {
+            // Simple click handler - browser converts taps to clicks on mobile
+            card.addEventListener('click', (e) => {
                 e.stopPropagation();
                 card.classList.toggle('expanded');
-            };
-
-            card.addEventListener('click', toggleCard);
-
-            // Add touch support for better mobile experience
-            card.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                toggleCard(e);
-            }, { passive: false });
+            });
 
             return card;
         }

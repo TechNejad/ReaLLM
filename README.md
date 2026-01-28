@@ -65,9 +65,62 @@ This is a **demonstration prototype** for research and discussion:
 
 Built with vanilla JavaScript and the Groq API. The entire interface runs as a single-page application.
 
+## Running Locally
+
+To run ReaLLM on your local machine for research or development:
+
+### Prerequisites
+- A modern web browser (Chrome, Firefox, Safari, or Edge)
+- Python 3 or Node.js (for local server)
+- Groq API key (free at [console.groq.com](https://console.groq.com))
+
+### Setup Steps
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/TechNejad/ReaLLM.git
+   cd ReaLLM
+   ```
+
+2. **Add your Groq API key**
+   - Open `index.html` in a text editor
+   - Find line 1461: `const API_KEY = "%%reaLLM_Groq_API%%";`
+   - Replace `%%reaLLM_Groq_API%%` with your actual Groq API key
+
+3. **Start a local server**
+
+   Using Python:
+   ```bash
+   python3 -m http.server 8000
+   ```
+
+   Or using Node.js (if installed):
+   ```bash
+   npm run dev
+   ```
+
+4. **Open in browser**
+   - Navigate to `http://localhost:8000`
+   - Start chatting to see transparency features in action
+
+### Testing (Optional)
+
+To run the automated test suite:
+
+```bash
+npm install
+npm test
+```
+
+See `tests/README.md` for more details on the testing framework.
+
+## Dependencies
+
+For a complete list of external dependencies and version specifications, see [DEPENDENCIES.md](DEPENDENCIES.md).
+
 ## Author
 
-**Mohsen HassanNejad**
+**Mohsen Hassan Nejad**
 Artificial Intelligence for Sustainable Societies (AISS) Program
 
 ## License

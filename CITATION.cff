@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+title: 'ReaLLM: Transparent Intelligence'
+message: >-
+  If you use this software in your research, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - family-names: Hassan Nejad
+    given-names: Mohsen
+    email: mohsen.nejad94@gmail.com
+    affiliation: 'Tallinn University, Lusófona University, and Tampere University - AI for Sustainable Societies (AISS) Program'
+repository-code: 'https://github.com/TechNejad/ReaLLM'
+url: 'https://reallm.netlify.app/'
+abstract: >-
+  ReaLLM is a research prototype that reveals what typical AI chatbots
+  hide: the system prompts and constraints that guide every response.
+  This project explores interface-level transparency as a safety mechanism,
+  making AI constraints visible and understandable to everyone, not just
+  AI researchers.
+keywords:
+  - AI transparency
+  - AI safety
+  - system prompts
+  - human-AI interaction
+  - explainable AI
+  - research prototype
+license: MIT
+version: 1.0.0
+date-released: '2025-01-28'

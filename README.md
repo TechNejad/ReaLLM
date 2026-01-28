@@ -41,6 +41,12 @@ This project is part of ongoing research into AI safety and human-AI interaction
 
 Read the full paper: [Project Description.pdf](Assets/ReaLLM_Paper.pdf)
 
+## Limitations
+
+  This is a **demonstration prototype** for research purposes:
+  - Not empirically validated through user studies
+  - Designed for demonstration, not production deployment
+
 ## Technology
 
 Built with vanilla JavaScript and the Groq API. The entire interface runs as a single-page application.

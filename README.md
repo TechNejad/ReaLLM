@@ -1,7 +1,6 @@
 # ReaLLM: Transparent Intelligence –> [live prototype](https://reallm.netlify.app/)
 
 ## What is ReaLLM?
-
 ReaLLM is a research prototype that reveals what typical AI chatbots hide: the system prompts and constraints that guide every response. Unlike standard chatbots that conceal their instructions, ReaLLM shows you exactly what rules, boundaries, and guidelines are shaping the AI's behavior.
 
 ## Why It Matters

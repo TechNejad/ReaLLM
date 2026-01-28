@@ -20,7 +20,7 @@ ReaLLM explores **interface-level transparency** as a safety mechanism – makin
 
 ## Key Features
 
-### 🔍 **Live Transparency Panel**
+### **Live Transparency Panel**
 As you chat, a side panel shows you what's shaping each response:
 - **Role & Identity**: What persona is the AI playing?
 - **Active Constraints**: What rules is it following?
@@ -127,6 +127,3 @@ Artificial Intelligence for Sustainable Societies (AISS) Program
 
 MIT License
 
----
-
-**Try it yourself** and discover what's really shaping AI responses.

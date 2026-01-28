@@ -1,7 +1,5 @@
 # ReaLLM: Transparent Intelligence –> [live prototype](https://reallm.netlify.app/)
 
-**Making the invisible visible** – See the hidden instructions that shape AI responses in real-time.
-
 ## What is ReaLLM?
 
 ReaLLM is a research prototype that reveals what typical AI chatbots hide: the system prompts and constraints that guide every response. Unlike standard chatbots that conceal their instructions, ReaLLM shows you exactly what rules, boundaries, and guidelines are shaping the AI's behavior.
@@ -27,10 +25,10 @@ As you chat, a side panel shows you what's shaping each response:
 - **Tone & Stance**: Why does it sound this way?
 - **Uncertainty Signals**: How confident is it?
 
-### 📜 **System Prompt Viewer**
+### **System Prompt Viewer**
 Click a button to see the complete hidden instruction set that defines the AI's behavior – displayed like code to show you exactly what's "under the hood."
 
-### 🤖 **Dual-Model Architecture**
+### **Dual-Model Architecture**
 Two AI models work together:
 1. **Primary Model**: Responds to your questions
 2. **Interpreter Model**: Analyzes and explains what constraints shaped that response
@@ -43,76 +41,9 @@ This project is part of ongoing research into AI safety and human-AI interaction
 
 Read the full paper: [Project Description.pdf](Assets/ReaLLM_Paper.pdf)
 
-## Design Philosophy
-
-**Transparency should be interpretive, not overwhelming.**
-
-Rather than dumping raw technical details, ReaLLM:
-- Provides **short, digestible insights**
-- Uses **plain language** for non-technical users
-- Offers **progressive disclosure** (click to learn more)
-- Updates **contextually** for each conversation turn
-
-## Limitations
-
-This is a **demonstration prototype** for research and discussion:
-- Not a production system
-- Not empirically validated through user studies
-- Uses a single, fixed system prompt (not adaptive)
-- Designed for demonstration, not deployment
-
 ## Technology
 
 Built with vanilla JavaScript and the Groq API. The entire interface runs as a single-page application.
-
-## Running Locally
-
-To run ReaLLM on your local machine for research or development:
-
-### Prerequisites
-- A modern web browser (Chrome, Firefox, Safari, or Edge)
-- Python 3 or Node.js (for local server)
-- Groq API key (free at [console.groq.com](https://console.groq.com))
-
-### Setup Steps
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/TechNejad/ReaLLM.git
-   cd ReaLLM
-   ```
-
-2. **Add your Groq API key**
-   - Open `index.html` in a text editor
-   - Find line 1461: `const API_KEY = "%%reaLLM_Groq_API%%";`
-   - Replace `%%reaLLM_Groq_API%%` with your actual Groq API key
-
-3. **Start a local server**
-
-   Using Python:
-   ```bash
-   python3 -m http.server 8000
-   ```
-
-   Or using Node.js (if installed):
-   ```bash
-   npm run dev
-   ```
-
-4. **Open in browser**
-   - Navigate to `http://localhost:8000`
-   - Start chatting to see transparency features in action
-
-### Testing (Optional)
-
-To run the automated test suite:
-
-```bash
-npm install
-npm test
-```
-
-See `tests/README.md` for more details on the testing framework.
 
 ## Dependencies
 

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReaLLM: Interface‑Level Transparency in Human–LLM Interaction</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <h1>ReaLLM</h1>
+      <p class="subtitle">Interface‑Level Transparency as a Safety Intervention in Human–LLM Interaction</p>
+      <p class="authors">Mohsen Hassan Nejad</p>
+      <div class="buttons">
+        <a href="ReaLLM_Paper.pdf" class="btn" target="_blank" rel="noopener">Paper</a>
+        <a href="https://github.com/TechNejad/ReaLLM" class="btn" target="_blank" rel="noopener">Code</a>
+        <a href="https://reallm.netlify.app/" class="btn" target="_blank" rel="noopener">Demo</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="abstract" class="section">
+      <div class="container">
+        <h2>Abstract</h2>
+        <p>
+          <strong>ReaLLM</strong> is a research prototype that explores <em>interface‑level transparency</em> as a soft safety mechanism for
+          conversational AI. While most interpretability research focuses on explaining what models are doing internally, ReaLLM
+          exposes the social layer of large language models by revealing the hidden system prompts and constraints that
+          shape every response. The project asks: can making these hidden instructions visible reduce over‑reliance on AI
+          and improve users’ mental models of how LLMs work? Developed for the AI Safety, Ethics, and Society course,
+          ReaLLM demonstrates how selective disclosure of system prompts can recalibrate user trust without modifying
+          model internals.
+        </p>
+      </div>
+    </section>
+
+    <section id="features" class="section alt">
+      <div class="container">
+        <h2>Key Features</h2>
+        <ul>
+          <li><strong>Live Transparency Panel.</strong> A side panel reveals the persona, active constraints, tone, and uncertainty
+          signals guiding each response, so users can see what’s influencing the conversation in real time.</li>
+          <li><strong>System Prompt Viewer.</strong> One click shows the complete hidden instruction set that defines the AI’s behavior —
+          displayed like source code to expose the “rules of the game.”</li>
+          <li><strong>Dual‑Model Architecture.</strong> A primary language model answers user questions while an interpreter model
+          analyzes and explains the underlying constraints shaping that answer.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="prototype" class="section">
+      <div class="container">
+        <h2>Prototype and Research</h2>
+        <p>
+          The proof‑of‑concept prototype demonstrates how identical outputs can be interpreted differently when the
+          context of hidden prompts becomes visible. Users can inspect the full system prompt and watch the transparency
+          panel update as they converse with the chatbot. The prototype illustrates two soft safety interventions:
+          <strong>full prompt disclosure</strong> and a <strong>contextual transparency panel</strong> that highlights the parts of the prompt that
+          might be influencing the current response.
+        </p>
+        <p>
+          This work is part of ongoing research into socially situated AI transparency and seeks to determine whether
+          interface‑level disclosure can reduce overreliance on AI and help users develop more accurate mental models.
+        </p>
+      </div>
+    </section>
+
+    <section id="citation" class="section alt">
+      <div class="container">
+        <h2>Citation</h2>
+        <p>If you use ReaLLM or build on this work, please cite our project:</p>
+        <pre class="bibtex">
+@misc{hassannejad2025reallm,
+    title={ReaLLM: Interface‑Level Transparency as a Safety Intervention in Human–LLM Interaction},
+    author={Mohsen Hassan Nejad},
+    year={2025},
+    note={AISES Course Project},
+    url={https://github.com/TechNejad/ReaLLM}
+}
+        </pre>
+      </div>
+    </section>
+
+    <section id="license" class="section">
+      <div class="container">
+        <h2>License</h2>
+        <p>This website and the associated project are released under the MIT License.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>Built with inspiration from the MedAgentSim project page. Licensed under the MIT License.</p>
+    </div>
+  </footer>
+</body>
+</html>

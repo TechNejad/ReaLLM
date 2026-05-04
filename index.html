@@ -33,8 +33,6 @@
             --shadow-lg: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
             --shadow-glow: 0 0 20px rgba(94, 234, 212, 0.3);
             --desktop-panel-width: clamp(320px, 30vw, 400px);
-            --panel-toggle-size: 40px;
-            --panel-toggle-peek: 20px;
         }
 
         * {
@@ -411,7 +409,7 @@
         }
 
         body.panel-hidden .transparency-panel {
-            transform: translateX(calc(100% - var(--panel-toggle-peek)));
+            transform: translateX(100%);
             box-shadow: none;
         }
 
@@ -420,48 +418,60 @@
             pointer-events: none;
         }
 
-        .desktop-panel-toggle {
+        .mobile-transparency-toggle {
             position: fixed;
-            top: calc(73px + 5.4rem + 3px);
-            right: calc(var(--desktop-panel-width) - (var(--panel-toggle-size) / 2));
-            width: var(--panel-toggle-size);
-            height: var(--panel-toggle-size);
+            bottom: 6.75rem;
+            right: calc(var(--desktop-panel-width) + 1rem);
+            width: 56px;
+            height: 56px;
             border-radius: 999px;
-            border: 1px solid var(--border-medium);
-            background: rgba(31, 37, 64, 0.96);
-            color: var(--accent);
+            background: var(--accent);
+            color: var(--primary-bg);
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 20px var(--accent-glow);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: var(--shadow-lg);
             z-index: 160;
-            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, right 0.35s ease;
+            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, right 0.35s ease;
         }
 
-        body.panel-hidden .desktop-panel-toggle {
-            right: calc(var(--panel-toggle-size) / -2);
+        body.panel-hidden .mobile-transparency-toggle {
+            right: 1rem;
         }
 
-        .desktop-panel-toggle:hover {
+        .mobile-transparency-toggle:hover {
             background: var(--tertiary-bg);
-            border-color: var(--accent);
-            transform: translateX(-2px);
+            color: var(--accent);
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
         }
 
-        .desktop-panel-toggle:focus-visible {
+        .mobile-transparency-toggle.is-active {
+            background: var(--tertiary-bg);
+            color: var(--accent);
+            box-shadow: var(--shadow);
+        }
+
+        .mobile-transparency-toggle:focus-visible {
             outline: 2px solid var(--accent);
             outline-offset: 3px;
         }
 
-        .desktop-panel-toggle svg {
-            width: 16px;
-            height: 16px;
+        .mobile-transparency-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .mobile-transparency-toggle svg {
+            width: 24px;
+            height: 24px;
+            transform: rotate(180deg);
             transition: transform 0.3s ease;
         }
 
-        body.panel-hidden .desktop-panel-toggle svg {
-            transform: rotate(180deg);
+        .mobile-transparency-toggle.is-active svg {
+            transform: rotate(0deg);
         }
 
         .panel-header {
@@ -963,10 +973,6 @@
                 overflow: hidden;
             }
 
-            .desktop-panel-toggle {
-                display: none;
-            }
-
             /* Mobile card styles - simplified */
             .insight-card {
                 padding: 1.25rem;
@@ -983,45 +989,9 @@
                 height: 18px;
             }
 
-            /* Mobile transparency toggle button */
             .mobile-transparency-toggle {
-                display: flex;
-                position: fixed;
                 bottom: 5.5rem;
                 right: 1rem;
-                width: 56px;
-                height: 56px;
-                border-radius: 50%;
-                background: var(--accent);
-                color: var(--primary-bg);
-                border: none;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 20px var(--accent-glow);
-                cursor: pointer;
-                align-items: center;
-                justify-content: center;
-                z-index: 160;
-                transition: all 0.3s;
-            }
-
-            .mobile-transparency-toggle.is-active {
-                background: var(--tertiary-bg);
-                color: var(--accent);
-                box-shadow: var(--shadow);
-            }
-
-            .mobile-transparency-toggle:active {
-                transform: scale(0.95);
-            }
-
-            .mobile-transparency-toggle svg {
-                width: 24px;
-                height: 24px;
-                transform: rotate(180deg);
-                transition: transform 0.3s ease;
-            }
-
-            .mobile-transparency-toggle.is-active svg {
-                transform: rotate(0deg);
             }
 
             /* Overlay backdrop when panel is open */
@@ -1399,11 +1369,6 @@
                 max-width: 600px;
             }
 
-            /* Hide mobile toggle button on desktop */
-            .mobile-transparency-toggle {
-                display: none;
-            }
-
             .mobile-transparency-backdrop {
                 display: none;
             }
@@ -1425,7 +1390,7 @@
         <div class="welcome-countdown" id="welcomeCountdown">5</div>
     </div>
 
-    <!-- Mobile Transparency Toggle Button -->
+    <!-- Transparency Toggle Button -->
     <button class="mobile-transparency-toggle" id="mobileTransparencyToggle" type="button" aria-controls="transparencyPanel" aria-expanded="true" aria-label="Hide transparency panel">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -1492,12 +1457,6 @@
             </div>
         </div>
     </div>
-
-    <button class="desktop-panel-toggle" id="desktopTransparencyToggle" type="button" aria-controls="transparencyPanel" aria-expanded="true" aria-label="Hide transparency panel">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-    </button>
 
     <!-- Right Panel: Transparency (Moved outside container for mobile z-index) -->
     <div class="transparency-panel" id="transparencyPanel">
@@ -1634,7 +1593,6 @@ Return JSON with these fields:
         const sendBtn = document.getElementById('sendBtn');
         const transparencyContent = document.getElementById('transparencyContent');
         const transparencyPanel = document.getElementById('transparencyPanel');
-        const desktopTransparencyToggle = document.getElementById('desktopTransparencyToggle');
         const mobileTransparencyToggle = document.getElementById('mobileTransparencyToggle');
         const mobileTransparencyBackdrop = document.getElementById('mobileTransparencyBackdrop');
         const viewPromptBtn = document.getElementById('viewPromptBtn');
@@ -1643,9 +1601,8 @@ Return JSON with these fields:
 
         // Typing Animation
         const typingMessages = [
-            "What's on your mind?",
-            "What would you like to explore?",
-            "What are you curious about?"
+            "What is influencing this interaction?",
+            "Who is in charge of this conversation?"
         ];
 
         let typingMessageIndex = 0;
@@ -1710,12 +1667,6 @@ Return JSON with these fields:
                 mobileTransparencyBackdrop.classList.toggle('visible', isMobileView() && isTransparencyPanelVisible);
             }
 
-            if (desktopTransparencyToggle) {
-                desktopTransparencyToggle.setAttribute('aria-expanded', String(isTransparencyPanelVisible));
-                desktopTransparencyToggle.setAttribute('aria-label', isTransparencyPanelVisible ? 'Hide transparency panel' : 'Show transparency panel');
-                desktopTransparencyToggle.title = isTransparencyPanelVisible ? 'Hide transparency panel' : 'Show transparency panel';
-            }
-
             if (mobileTransparencyToggle) {
                 mobileTransparencyToggle.classList.toggle('is-active', isTransparencyPanelVisible);
                 mobileTransparencyToggle.setAttribute('aria-expanded', String(isTransparencyPanelVisible));
@@ -1775,10 +1726,6 @@ Return JSON with these fields:
                     modalOverlay.classList.remove('active');
                 }
             });
-
-            if (desktopTransparencyToggle) {
-                desktopTransparencyToggle.addEventListener('click', toggleTransparencyPanel);
-            }
 
             if (mobileTransparencyToggle) {
                 mobileTransparencyToggle.addEventListener('click', toggleTransparencyPanel);

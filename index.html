@@ -32,6 +32,9 @@
             --shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.4);
             --shadow-lg: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
             --shadow-glow: 0 0 20px rgba(94, 234, 212, 0.3);
+            --desktop-panel-width: clamp(320px, 30vw, 400px);
+            --panel-toggle-size: 40px;
+            --panel-toggle-peek: 20px;
         }
 
         * {
@@ -86,7 +89,7 @@
             border-bottom: 2px solid var(--border);
             padding: 1rem 2rem;
             display: grid;
-            grid-template-columns: 1fr 400px;
+            grid-template-columns: 1fr var(--desktop-panel-width);
             align-items: center;
             position: sticky;
             top: 0;
@@ -94,6 +97,10 @@
             backdrop-filter: blur(10px);
             background: rgba(20, 25, 55, 0.95);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        body.panel-hidden .header {
+            grid-template-columns: 1fr auto;
         }
 
         .logo-section {
@@ -160,7 +167,12 @@
             backdrop-filter: blur(8px);
             position: relative;
             /* Desktop: Leave space for transparency panel */
-            margin-right: 400px;
+            margin-right: var(--desktop-panel-width);
+            transition: margin-right 0.35s ease;
+        }
+
+        body.panel-hidden .chat-panel {
+            margin-right: 0;
         }
 
         .chat-messages {
@@ -385,13 +397,71 @@
             display: flex;
             flex-direction: column;
             overflow-y: auto;
+            overflow-x: visible;
             /* Desktop: Position as right column */
             position: fixed;
             right: 0;
             top: 73px;
-            width: 400px;
+            width: var(--desktop-panel-width);
             height: calc(100vh - 73px);
             z-index: 1;
+            transform: translateX(0);
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+            will-change: transform;
+        }
+
+        body.panel-hidden .transparency-panel {
+            transform: translateX(calc(100% - var(--panel-toggle-peek)));
+            box-shadow: none;
+        }
+
+        body.panel-hidden .transparency-panel .panel-header,
+        body.panel-hidden .transparency-panel .transparency-content {
+            pointer-events: none;
+        }
+
+        .desktop-panel-toggle {
+            position: fixed;
+            top: calc(73px + 5.4rem + 3px);
+            right: calc(var(--desktop-panel-width) - (var(--panel-toggle-size) / 2));
+            width: var(--panel-toggle-size);
+            height: var(--panel-toggle-size);
+            border-radius: 999px;
+            border: 1px solid var(--border-medium);
+            background: rgba(31, 37, 64, 0.96);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            z-index: 160;
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, right 0.35s ease;
+        }
+
+        body.panel-hidden .desktop-panel-toggle {
+            right: calc(var(--panel-toggle-size) / -2);
+        }
+
+        .desktop-panel-toggle:hover {
+            background: var(--tertiary-bg);
+            border-color: var(--accent);
+            transform: translateX(-2px);
+        }
+
+        .desktop-panel-toggle:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+        }
+
+        .desktop-panel-toggle svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        body.panel-hidden .desktop-panel-toggle svg {
+            transform: rotate(180deg);
         }
 
         .panel-header {
@@ -872,24 +942,29 @@
 
             .transparency-panel {
                 position: fixed;
-                right: -100%;
+                right: 0;
                 top: 60px;
                 width: 85%;
                 max-width: 360px;
                 height: calc(100vh - 60px);
                 height: calc(100dvh - 60px);
                 z-index: 155;
-                transition: right 0.3s ease-out;
+                transform: translateX(0);
+                transition: transform 0.3s ease-out;
                 box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
             }
 
-            .transparency-panel.mobile-visible {
-                right: 0;
+            body.panel-hidden .transparency-panel {
+                transform: translateX(100%);
             }
 
             /* Prevent body scroll when panel is open */
             body.panel-open {
                 overflow: hidden;
+            }
+
+            .desktop-panel-toggle {
+                display: none;
             }
 
             /* Mobile card styles - simplified */
@@ -928,6 +1003,12 @@
                 transition: all 0.3s;
             }
 
+            .mobile-transparency-toggle.is-active {
+                background: var(--tertiary-bg);
+                color: var(--accent);
+                box-shadow: var(--shadow);
+            }
+
             .mobile-transparency-toggle:active {
                 transform: scale(0.95);
             }
@@ -935,6 +1016,12 @@
             .mobile-transparency-toggle svg {
                 width: 24px;
                 height: 24px;
+                transform: rotate(180deg);
+                transition: transform 0.3s ease;
+            }
+
+            .mobile-transparency-toggle.is-active svg {
+                transform: rotate(0deg);
             }
 
             /* Overlay backdrop when panel is open */
@@ -1339,9 +1426,9 @@
     </div>
 
     <!-- Mobile Transparency Toggle Button -->
-    <button class="mobile-transparency-toggle" id="mobileTransparencyToggle" aria-label="Toggle transparency panel">
+    <button class="mobile-transparency-toggle" id="mobileTransparencyToggle" type="button" aria-controls="transparencyPanel" aria-expanded="true" aria-label="Hide transparency panel">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
         </svg>
     </button>
 
@@ -1406,8 +1493,14 @@
         </div>
     </div>
 
+    <button class="desktop-panel-toggle" id="desktopTransparencyToggle" type="button" aria-controls="transparencyPanel" aria-expanded="true" aria-label="Hide transparency panel">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+    </button>
+
     <!-- Right Panel: Transparency (Moved outside container for mobile z-index) -->
-    <div class="transparency-panel">
+    <div class="transparency-panel" id="transparencyPanel">
         <div class="panel-header">
             <h3>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
@@ -1533,13 +1626,17 @@ Return JSON with these fields:
 
         // State
         let conversationHistory = [];
-        let hasShownMobileTransparency = false;
+        let isTransparencyPanelVisible = true;
 
         // DOM Elements
         const chatMessages = document.getElementById('chatMessages');
         const chatInput = document.getElementById('chatInput');
         const sendBtn = document.getElementById('sendBtn');
         const transparencyContent = document.getElementById('transparencyContent');
+        const transparencyPanel = document.getElementById('transparencyPanel');
+        const desktopTransparencyToggle = document.getElementById('desktopTransparencyToggle');
+        const mobileTransparencyToggle = document.getElementById('mobileTransparencyToggle');
+        const mobileTransparencyBackdrop = document.getElementById('mobileTransparencyBackdrop');
         const viewPromptBtn = document.getElementById('viewPromptBtn');
         const modalOverlay = document.getElementById('modalOverlay');
         const promptDisplay = document.getElementById('promptDisplay');
@@ -1599,6 +1696,43 @@ Return JSON with these fields:
             }
         }
 
+        function isMobileView() {
+            return window.innerWidth <= 768;
+        }
+
+        function syncTransparencyPanelState() {
+            if (!transparencyPanel) return;
+
+            document.body.classList.toggle('panel-hidden', !isTransparencyPanelVisible);
+            document.body.classList.toggle('panel-open', isMobileView() && isTransparencyPanelVisible);
+
+            if (mobileTransparencyBackdrop) {
+                mobileTransparencyBackdrop.classList.toggle('visible', isMobileView() && isTransparencyPanelVisible);
+            }
+
+            if (desktopTransparencyToggle) {
+                desktopTransparencyToggle.setAttribute('aria-expanded', String(isTransparencyPanelVisible));
+                desktopTransparencyToggle.setAttribute('aria-label', isTransparencyPanelVisible ? 'Hide transparency panel' : 'Show transparency panel');
+                desktopTransparencyToggle.title = isTransparencyPanelVisible ? 'Hide transparency panel' : 'Show transparency panel';
+            }
+
+            if (mobileTransparencyToggle) {
+                mobileTransparencyToggle.classList.toggle('is-active', isTransparencyPanelVisible);
+                mobileTransparencyToggle.setAttribute('aria-expanded', String(isTransparencyPanelVisible));
+                mobileTransparencyToggle.setAttribute('aria-label', isTransparencyPanelVisible ? 'Hide transparency panel' : 'Show transparency panel');
+                mobileTransparencyToggle.title = isTransparencyPanelVisible ? 'Hide transparency panel' : 'Show transparency panel';
+            }
+        }
+
+        function setTransparencyPanelVisibility(visible) {
+            isTransparencyPanelVisible = visible;
+            syncTransparencyPanelState();
+        }
+
+        function toggleTransparencyPanel() {
+            setTransparencyPanelVisibility(!isTransparencyPanelVisible);
+        }
+
         // Initialize
         function init() {
             // Display system prompt in modal with file header and line numbers
@@ -1642,41 +1776,24 @@ Return JSON with these fields:
                 }
             });
 
-            // Mobile transparency panel toggle
-            const mobileToggle = document.getElementById('mobileTransparencyToggle');
-            const mobileBackdrop = document.getElementById('mobileTransparencyBackdrop');
-            const transparencyPanel = document.querySelector('.transparency-panel');
+            if (desktopTransparencyToggle) {
+                desktopTransparencyToggle.addEventListener('click', toggleTransparencyPanel);
+            }
 
-            if (mobileToggle && mobileBackdrop && transparencyPanel) {
-                const openPanel = () => {
-                    transparencyPanel.classList.add('mobile-visible');
-                    mobileBackdrop.classList.add('visible');
-                    document.body.classList.add('panel-open');
-                };
+            if (mobileTransparencyToggle) {
+                mobileTransparencyToggle.addEventListener('click', toggleTransparencyPanel);
+            }
 
-                const closePanel = () => {
-                    transparencyPanel.classList.remove('mobile-visible');
-                    mobileBackdrop.classList.remove('visible');
-                    document.body.classList.remove('panel-open');
-                };
-
-                const togglePanel = () => {
-                    if (transparencyPanel.classList.contains('mobile-visible')) {
-                        closePanel();
-                    } else {
-                        openPanel();
-                    }
-                };
-
-                mobileToggle.addEventListener('click', togglePanel);
-
-                // Only close when clicking the backdrop itself, not the panel
-                mobileBackdrop.addEventListener('click', (e) => {
-                    if (e.target === mobileBackdrop) {
-                        closePanel();
+            if (mobileTransparencyBackdrop) {
+                mobileTransparencyBackdrop.addEventListener('click', (e) => {
+                    if (e.target === mobileTransparencyBackdrop) {
+                        setTransparencyPanelVisibility(false);
                     }
                 });
             }
+
+            window.addEventListener('resize', syncTransparencyPanelState);
+            syncTransparencyPanelState();
 
             // Don't load placeholder insights by default - panel should be empty
             // Placeholders only for offline/testing mode
@@ -1774,6 +1891,8 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
 
         // Update transparency panel
         async function updateTransparencyPanel(userMessage, assistantResponse) {
+            setTransparencyPanelVisibility(true);
+
             // Show loading state
             transparencyContent.innerHTML = `
                 <div class="empty-state">
@@ -1797,30 +1916,6 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
                         const card = createInsightCard(insight);
                         transparencyContent.appendChild(card);
                     }
-                }
-
-                // Auto-show transparency panel on mobile after first message
-                if (!hasShownMobileTransparency && window.innerWidth <= 768) {
-                    hasShownMobileTransparency = true;
-
-                    // Small delay to let insights render
-                    setTimeout(() => {
-                        const transparencyPanel = document.querySelector('.transparency-panel');
-                        const mobileBackdrop = document.getElementById('mobileTransparencyBackdrop');
-
-                        if (transparencyPanel && mobileBackdrop) {
-                            transparencyPanel.classList.add('mobile-visible');
-                            mobileBackdrop.classList.add('visible');
-                            document.body.classList.add('panel-open');
-
-                            // Auto-hide after 4 seconds
-                            setTimeout(() => {
-                                transparencyPanel.classList.remove('mobile-visible');
-                                mobileBackdrop.classList.remove('visible');
-                                document.body.classList.remove('panel-open');
-                            }, 4000);
-                        }
-                    }, 500);
                 }
             } catch (error) {
                 console.error('Interpreter error:', error);

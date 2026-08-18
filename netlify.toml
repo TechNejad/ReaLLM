@@ -1,5 +1,5 @@
 [build]
-  command = "sed -i.bak 's|%%reaLLM_Groq_API%%|'$reaLLM_Groq_API'|g' index.html && rm -f index.html.bak"
+  command = "sed -i.bak 's|%%reaLLM_2nd%%|'$reaLLM_2nd'|g' index.html && rm -f index.html.bak"
   publish = "."
 
 [[redirects]]

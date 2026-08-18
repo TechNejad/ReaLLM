@@ -1829,7 +1829,7 @@ Analyze what constraints and guidelines shaped this response. Return only valid 
                 model: LLM_MODEL,
                 temperature: 0.3,
                 max_tokens: 2048, reasoning_effort: "low",
-                response_format: { type: "json_object" }
+                response_format: { type: "json_schema", json_schema: { name: "transparency_insights", strict: true, schema: { type: "object", additionalProperties: false, properties: { role_identity: { type: "object", additionalProperties: false, properties: { label: { type: "string" }, value: { type: "string" }, detail: { type: "string" } }, required: ["label","value","detail"] }, active_constraints: { type: "object", additionalProperties: false, properties: { label: { type: "string" }, value: { type: "string" }, detail: { type: "string" } }, required: ["label","value","detail"] }, tone_stance: { type: "object", additionalProperties: false, properties: { label: { type: "string" }, value: { type: "string" }, detail: { type: "string" } }, required: ["label","value","detail"] }, design_choice: { type: "object", additionalProperties: false, properties: { label: { type: "string" }, value: { type: "string" }, detail: { type: "string" } }, required: ["label","value","detail"] } }, required: ["role_identity","active_constraints","tone_stance","design_choice"] } } }
             });
 
             const jsonResponse = completion.choices[0]?.message?.content || '{}';
